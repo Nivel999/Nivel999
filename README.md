@@ -7,3 +7,7 @@
 
 Meu website: https://portfoliohubdavioli.my.canva.site/
 
+/academicos -> Projetos da faculdade  
+/Pessoal -> Futuras ideias minhas
+
+
