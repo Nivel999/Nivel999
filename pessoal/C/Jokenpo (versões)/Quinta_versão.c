@@ -1,4 +1,14 @@
-// #include <unistd.h> // Removed: not needed for Windows
+/*
+(Alguns bugs na hora do computador vencer, mas é só reiniciar o jogo que o bug visual some)
+Esqueci de adicionar aqui no github, mas o projeto está completo
+Melhorias adicionadas:
+1- Interface
+2- Placares
+3- Configurações
+Tudo isso eu fiz em 100% em C, fico muito feliz em ter conseguido finalizar esse projeto pessoal, pois aprendi muitas funcionalidades do C e acredito que melhorei o meu raciocinio lógico.
+*/
+
+#include <windows.h>
 #include <stdio.h>
 #include <locale.h>
 #include <string.h>
@@ -97,7 +107,7 @@ int main()
                     system("cls");
                     break;
                 }
-                else if (config == 'n' || config == 'N')
+                else if (config == 'n' | config == 'N')
                 {
                     printf("modo nao ativado");
                     sleep(3);
@@ -116,7 +126,7 @@ int main()
             case 5:
                 system("cls");
                 break;
-
+                
             default:
                 system("cls");
                 break;
@@ -146,17 +156,19 @@ int main()
             printf("%s", c[0][Ci]);
             printf("%d (posicao do computador)", Ci);
         */
-
-        // Se vai ou não aparecer a posição do computador
+        
+        //Se vai ou não aparecer a posição do computador
         if (modo == true)
         {
             printf("\n(posicao do computador -> %d)\n", Ci);
         }
-        // contador de partidas
+        
+         // contador de partidas
         part++;
+        
 
         // Conversao de string para poder localizar no vetor
-
+        
         printf("partidas -> %d\n", part);
         printf("\n Digite sua opcao (pedra, papel ou tesoura):");
         fgets(vet, sizeof(vet), stdin);
@@ -172,7 +184,7 @@ int main()
             }
         }
 
-        // Decisoes Player:
+        // Decisoes Comp:
         if (k == 0) // pedra
         {
             strcpy(d[0][k], d[1][0]);
@@ -207,7 +219,9 @@ int main()
         // decisao < 0 -> computador ganha
         // decisao = 0 -> empate
 
-        // Ganhador vencer
+
+
+        //Ganhador vencer
         if ((decisao == -2) || (decisao == 1))
         {
 
@@ -216,7 +230,7 @@ int main()
             for (int temp = 3; temp > -1; temp--)
             {
                 printf("partidas -> %d\n", part);
-                printf("\n(posicao do computador era -> %d)\n", Ci);
+                printf("\n(posicao do computador era -> %s)\n", Ci);
                 printf("ganhador venceu \n");
                 printf("\nseu placar no momento e de:\n Pontuacao Player -> %d\n Pontuacao Comp -> %d\n", PontP, PontC);
                 printf("\nA partida sera carregada em %d", temp);
@@ -225,7 +239,7 @@ int main()
             }
         }
 
-        // Empate
+        //Empate
         else if (decisao == 0)
         {
             system("cls");
@@ -241,7 +255,7 @@ int main()
             }
         }
         else
-        // Computador vencer
+        //Computador vencer
         {
             printf("partidas -> %d\n", inter);
             PontC++;
