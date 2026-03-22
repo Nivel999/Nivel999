@@ -2,6 +2,34 @@ import java.util.Scanner;
 
 public class Main {
 
+    /*
+    Crie um simulador de caixa eletrônico simples em Java. 
+    O usuário começa com um saldo inicial de R$ 500,00. 
+    O programa deve exibir um menu com as seguintes opções:
+    
+    1 - Consultar Saldo
+    2 - Realizar Depósito
+    3 - Realizar Saque
+    4 - Sair
+
+    Regras:
+    
+    * O programa deve continuar exibindo o menu e processando as 
+    opções até que o usuário escolha a opção 4 (Sair).
+    
+    * Na opção de Depósito, o valor depositado deve ser somado ao saldo. 
+    O programa não deve aceitar depósitos de valores negativos.
+    
+    * Na opção de Saque, o valor deve ser subtraído do saldo. 
+    O programa não deve permitir saques de valores negativos e 
+    não deve permitir que o usuário saque um valor maior do 
+    que o saldo disponível (informando "Saldo insuficiente").
+    
+    * Se o usuário digitar uma opção inválida no menu principal, 
+    o programa deve avisar "Opcao inválida" e mostrar o menu novamente.
+    */
+
+
     public static void main(String[] args) {
         Scanner Scanner = new Scanner (System.in);
         float saldo = 500;
