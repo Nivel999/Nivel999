@@ -1,4 +1,8 @@
+Atualmente trabalhando em: Sistematiza (SaaS Full Stack em Next.js e PostgreSQL - Privado).
 
+Projetos Recentes: Edificheck (App Flutter/React com arquitetura Supabase/Neon - Privado).
+
+Abaixo, você encontra meus projetos acadêmicos e desafios de lógica.
 
 ## 🌐 Socials:
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/www.linkedin.com/in/davi-oliveira-48b8501a3) [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:davioliveira1737@gmail.com) 
