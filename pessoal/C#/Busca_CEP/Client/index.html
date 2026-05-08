@@ -40,8 +40,10 @@
 
                 divResultado.innerHTML = `
                     <p><strong>Logradouro:</strong> ${dados.logradouro}</p>
+                    <p><strong>Complemento:</strong> ${dados.complemento}</p>
                     <p><strong>Bairro:</strong> ${dados.bairro}</p>
                     <p><strong>Cidade:</strong> ${dados.localidade} - ${dados.uf}</p>
+                    <p><strong>ibge:</strong> ${dados.ibge}</p>
                 `;
             } catch (erro) {
                 divResultado.innerHTML = `<span style="color:red">${erro.message}</span>`;
