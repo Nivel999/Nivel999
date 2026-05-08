@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Busca CEP - Entrevista</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+        .container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; box-shadow: 2px 2px 10px #0000001a; }
+        input { padding: 10px; width: 200px; }
+        button { padding: 10px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+        #resultado { margin-top: 20px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Consultar Endereço</h2>
+        <input type="text" id="cepInput" placeholder="Digite o CEP (8 dígitos)">
+        <button onclick="buscarCep()">Buscar</button>
+
+        <div id="resultado">
+            </div>
+    </div>
+
+    <script>
+        async function buscarCep() {
+            const cep = document.getElementById('cepInput').value;
+            const divResultado = document.getElementById('resultado');
+            
+            divResultado.innerHTML = "Buscando...";
+
+            try {
+                // Chame o SEU SERVIDOR C#, não o ViaCep direto!
+                // Importante: Verifique se a porta é a 5000 ou a que aparece no seu terminal
+                const response = await fetch(`http://localhost:5000/api/cep/${cep}`);
+                
+                if (!response.ok) throw new Error("CEP não encontrado ou erro no servidor");
+
+                const dados = await response.json();
+
+                divResultado.innerHTML = `
+                    <p><strong>Logradouro:</strong> ${dados.logradouro}</p>
+                    <p><strong>Bairro:</strong> ${dados.bairro}</p>
+                    <p><strong>Cidade:</strong> ${dados.localidade} - ${dados.uf}</p>
+                `;
+            } catch (erro) {
+                divResultado.innerHTML = `<span style="color:red">${erro.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
