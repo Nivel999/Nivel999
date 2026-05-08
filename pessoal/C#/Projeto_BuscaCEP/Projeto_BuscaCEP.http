@@ -1,0 +1,6 @@
+@Projeto_BuscaCEP_HostAddress = http://localhost:5017
+
+GET {{Projeto_BuscaCEP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
