@@ -6,17 +6,12 @@ namespace Busca_CEP.Models
     {
         [Key]
         public int Id { get; set; }
-
         [Required]
         public string Nome { get; set; } = string.Empty;
-
         [Required]
         public string Login { get; set; } = string.Empty;
-
         [Required]
         public string Senha { get; set; } = string.Empty;
-
-        // RELACIONAMENTO: Um usuário tem uma lista de endereços
         public ICollection<Endereco> Enderecos { get; set; } = new List<Endereco>();
     }
 }

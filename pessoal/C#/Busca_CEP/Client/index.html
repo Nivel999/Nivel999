@@ -85,7 +85,7 @@
         }
 
         function logout() {
-            location.reload(); // Simplesmente recarrega a página
+            location.reload();
         }
 
         // --- FUNÇÕES DE CEP (ISOLADAS POR USUÁRIO) ---
@@ -109,9 +109,9 @@
             div.innerHTML = enderecos.map(e => `
                 <div class="card">
                     <strong>${e.cep}</strong><p>
-                    complemento:${e.complemento}<p>
-                    Log. e bairro${e.logradouro}, ${e.bairro}<p>
-                    Localidade e uf:${e.localidade} - ${e.uf}<p>
+                    complemento: ${e.complemento}<p>
+                    Log. e bairro: ${e.logradouro}, ${e.bairro}<p>
+                    Localidade e uf: ${e.localidade} - ${e.uf}<p>
                     IBGE: ${e.ibge}<p>
 
                     

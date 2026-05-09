@@ -10,12 +10,11 @@ namespace Busca_CEP.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly AppDbContext _context;
-
         public UsuarioController(AppDbContext context)
         {
             _context = context;
         }
-
+        
         // CADASTRO
         [HttpPost("registrar")]
         public async Task<IActionResult> Registrar([FromBody] Usuario novoUsuario)
@@ -28,7 +27,6 @@ namespace Busca_CEP.Controllers
             return Ok(novoUsuario);
         }
 
-        // LOGIN (Agora usando o DTO)
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginInfo)
         {
@@ -41,7 +39,6 @@ namespace Busca_CEP.Controllers
         }
     }
 
-    // CLASSE AUXILIAR (DTO): Serve apenas para receber os dados enxutos do front-end
     public class LoginDTO
     {
         public string Login { get; set; } = string.Empty;

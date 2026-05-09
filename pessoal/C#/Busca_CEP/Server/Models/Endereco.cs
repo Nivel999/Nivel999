@@ -14,10 +14,7 @@ namespace Busca_CEP.Models
         public string localidade { get; set; } = string.Empty;
         public string uf { get; set; } = string.Empty;
         public string ibge { get; set; } = string.Empty;
-
-        // CHAVE ESTRANGEIRA: Liga o endereço ao Usuário
         public int UsuarioId { get; set; }
-        
         [ForeignKey("UsuarioId")]
         public Usuario? Usuario { get; set; }
     }
