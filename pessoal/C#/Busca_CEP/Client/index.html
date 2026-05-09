@@ -96,7 +96,9 @@
         const API_BASE = "http://localhost:5000/api";
         let usuarioLogadoId = null;
 
-        // --- FUNÇÕES DE USUÁRIO ---
+        
+        //  FUNÇÕES DE USUÁRIO
+
 
         async function login() {
             const login = document.getElementById('userInput').value;
@@ -120,16 +122,13 @@
             const login = document.getElementById('userInput').value;
             const senha = document.getElementById('passInput').value;
 
-            // Trava 1: Garante que os campos da tela não estão vazios
             if (!login || !senha) {
                 alert("Por favor, digite um usuário e uma senha nas caixinhas antes de clicar em criar conta!");
-                return; // Para a função aqui e nem tenta mandar pro servidor
+                return;
             }
 
-            // Pede o nome
             const nome = prompt("Qual seu nome completo?");
 
-            // Trava 2: Garante que o nome não está vazio
             if (!nome) {
                 alert("Você precisa digitar um nome para se cadastrar!");
                 return;
@@ -138,13 +137,11 @@
             const res = await fetch(`${API_BASE}/usuario/registrar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // Enviando exatamente com as letras iniciais maiúsculas (padrão do C#) para evitar qualquer problema de formatação
                 body: JSON.stringify({ Nome: nome, Login: login, Senha: senha })
             });
 
             if (res.ok) {
                 alert("Cadastrado com sucesso! Agora clique em Entrar.");
-                // Opcional: já limpa os campos para o usuário digitar de novo no login
                 document.getElementById('userInput').value = "";
                 document.getElementById('passInput').value = "";
             } else {
@@ -165,16 +162,27 @@
             location.reload();
         }
 
-        // --- FUNÇÕES DE CEP (ISOLADAS POR USUÁRIO) ---
+        //  FUNÇÕES DE CEP
+
 
         async function salvarCep() {
             const cep = document.getElementById('cepInput').value;
-            // Enviamos o ID do usuário logado na URL para o banco saber de quem é o endereço
             const res = await fetch(`${API_BASE}/cep/${cep}/${usuarioLogadoId}`, { method: 'POST' });
 
             if (res.ok) {
                 document.getElementById('cepInput').value = "";
                 listarEnderecos();
+            }
+        }
+        async function apagarCep(id) {
+            if (!confirm("Tem certeza que deseja apagar este endereço?")) return;
+
+            const res = await fetch(`${API_BASE}/cep/${id}`, { method: 'DELETE' });
+
+            if (res.ok) {
+                listarEnderecos();
+            } else {
+                alert("Erro ao apagar o endereço.");
             }
         }
 
@@ -190,6 +198,9 @@
                     Log. e bairro: ${e.logradouro}, ${e.bairro}<p>
                     Localidade e uf: ${e.localidade} - ${e.uf}<p>
                     IBGE: ${e.ibge}<p>
+                <button class="btn-danger" style="padding: 5px 10px; margin-top: 10px; font-size: 12px;" onclick="apagarCep(${e.id})">
+                    Excluir Endereço
+                </button>
 
                     
                 </div>
