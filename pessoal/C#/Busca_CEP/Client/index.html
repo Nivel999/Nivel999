@@ -108,9 +108,13 @@
 
             div.innerHTML = enderecos.map(e => `
                 <div class="card">
-                    <strong>${e.cep}</strong><br>
-                    ${e.logradouro}, ${e.bairro}<br>
-                    ${e.localidade} - ${e.uf}
+                    <strong>${e.cep}</strong><p>
+                    complemento:${e.complemento}<p>
+                    Log. e bairro${e.logradouro}, ${e.bairro}<p>
+                    Localidade e uf:${e.localidade} - ${e.uf}<p>
+                    IBGE: ${e.ibge}<p>
+
+                    
                 </div>
             `).join('');
         }
