@@ -28,7 +28,7 @@
             const cep = document.getElementById('cepInput').value;
             const divResultado = document.getElementById('resultado');
             
-            
+            divResultado.innerHTML = "Buscando...";
 
             try {
                 const response = await fetch(`http://localhost:5000/api/cep/${cep}`);

@@ -11,7 +11,7 @@ namespace Busca_CEP.Controllers
 
         public CepController()
         {
-            _cepService = new CepService(); // Depois na entrevista, use Injeção de Dependência aqui
+            _cepService = new CepService(); 
         }
 
         [HttpGet("{cep}")]

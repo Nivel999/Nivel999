@@ -12,12 +12,25 @@ namespace Busca_CEP.Services
             _httpClient = new HttpClient();
         }
 
-        public async Task<Endereco> BuscarCepAsync(string cep)
+        // 1. Note o '?' depois de Endereco. Isso diz: "Pode ser que eu não encontre nada"
+        public async Task<Endereco?> BuscarCepAsync(string cep)
         {
             string url = $"https://viacep.com.br/ws/{cep}/json/";
             
-            var resposta = await _httpClient.GetStringAsync(url);
-            return JsonSerializer.Deserialize<Endereco>(resposta);
+            try 
+            {
+                var resposta = await _httpClient.GetStringAsync(url);
+                
+                var resultado = JsonSerializer.Deserialize<Endereco>(resposta);
+
+                // 2. O '??' é um segurança: se o resultado for nulo, ele cria um Endereco vazio
+                return resultado ?? new Endereco();
+            }
+            catch
+            {
+                // Se der erro na internet ou o CEP não existir, retorna um objeto vazio
+                return new Endereco();
+            }
         }
     }
 }

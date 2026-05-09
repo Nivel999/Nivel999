@@ -1,13 +1,24 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Busca_CEP.Models
 {
     public class Endereco
     {
-        public string cep { get; set; }
-        public string logradouro { get; set; }
-        public string complemento { get; set; }
-        public string bairro { get; set; }
-        public string localidade { get; set; }
-        public string uf { get; set; }
-        public string ibge { get; set; }
+        [Key]
+        public int Id { get; set; }
+        public string cep { get; set; } = string.Empty;
+        public string logradouro { get; set; } = string.Empty;
+        public string complemento { get; set; } = string.Empty;
+        public string bairro { get; set; } = string.Empty;
+        public string localidade { get; set; } = string.Empty;
+        public string uf { get; set; } = string.Empty;
+        public string ibge { get; set; } = string.Empty;
+
+        // CHAVE ESTRANGEIRA: Liga o endereço ao Usuário
+        public int UsuarioId { get; set; }
+        
+        [ForeignKey("UsuarioId")]
+        public Usuario? Usuario { get; set; }
     }
 }
