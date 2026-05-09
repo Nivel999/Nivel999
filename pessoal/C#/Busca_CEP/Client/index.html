@@ -23,20 +23,21 @@
     </div>
 
     <script>
+        // Serve para buscar CEP
         async function buscarCep() {
             const cep = document.getElementById('cepInput').value;
             const divResultado = document.getElementById('resultado');
             
-            divResultado.innerHTML = "Buscando...";
+            
 
             try {
-                // Chame o SEU SERVIDOR C#, não o ViaCep direto!
-                // Importante: Verifique se a porta é a 5000 ou a que aparece no seu terminal
                 const response = await fetch(`http://localhost:5000/api/cep/${cep}`);
+                console.log("Teste:", response);
                 
                 if (!response.ok) throw new Error("CEP não encontrado ou erro no servidor");
 
                 const dados = await response.json();
+                console.log("Esse é o Json:", dados);
 
                 divResultado.innerHTML = `
                     <p><strong>Logradouro:</strong> ${dados.logradouro}</p>
@@ -48,6 +49,9 @@
             } catch (erro) {
                 divResultado.innerHTML = `<span style="color:red">${erro.message}</span>`;
             }
+        }
+        async function CriarCep(params) {
+            
         }
     </script>
 </body>
