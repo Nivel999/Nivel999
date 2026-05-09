@@ -1,20 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Busca CEP - Sistema Restrito</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; padding: 50px; background-color: #f0f2f5; }
-        .box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 400px; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.3s; margin-top: 10px; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-        .hidden { display: none; }
-        .card { background: #f8f9fa; padding: 15px; margin-top: 10px; border-radius: 8px; border-left: 4px solid #007bff; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+            background-color: #f0f2f5;
+        }
+
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="authContainer" class="box">
@@ -32,7 +87,7 @@
         <hr>
         <input type="text" id="cepInput" placeholder="Digite o CEP">
         <button class="btn-primary" onclick="salvarCep()">Buscar e Salvar</button>
-        
+
         <h3>Meus Endereços Salvos</h3>
         <div id="listaEnderecos"></div>
     </div>
@@ -64,16 +119,38 @@
         async function cadastrar() {
             const login = document.getElementById('userInput').value;
             const senha = document.getElementById('passInput').value;
+
+            // Trava 1: Garante que os campos da tela não estão vazios
+            if (!login || !senha) {
+                alert("Por favor, digite um usuário e uma senha nas caixinhas antes de clicar em criar conta!");
+                return; // Para a função aqui e nem tenta mandar pro servidor
+            }
+
+            // Pede o nome
             const nome = prompt("Qual seu nome completo?");
+
+            // Trava 2: Garante que o nome não está vazio
+            if (!nome) {
+                alert("Você precisa digitar um nome para se cadastrar!");
+                return;
+            }
 
             const res = await fetch(`${API_BASE}/usuario/registrar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ login, senha, nome })
+                // Enviando exatamente com as letras iniciais maiúsculas (padrão do C#) para evitar qualquer problema de formatação
+                body: JSON.stringify({ Nome: nome, Login: login, Senha: senha })
             });
 
-            if (res.ok) alert("Cadastrado! Agora clique em Entrar.");
-            else alert("Erro ao cadastrar (usuário já existe?)");
+            if (res.ok) {
+                alert("Cadastrado com sucesso! Agora clique em Entrar.");
+                // Opcional: já limpa os campos para o usuário digitar de novo no login
+                document.getElementById('userInput').value = "";
+                document.getElementById('passInput').value = "";
+            } else {
+                const erroDoServidor = await res.text();
+                alert("O servidor recusou: " + erroDoServidor);
+            }
         }
 
         function iniciarSessao(user) {
@@ -94,7 +171,7 @@
             const cep = document.getElementById('cepInput').value;
             // Enviamos o ID do usuário logado na URL para o banco saber de quem é o endereço
             const res = await fetch(`${API_BASE}/cep/${cep}/${usuarioLogadoId}`, { method: 'POST' });
-            
+
             if (res.ok) {
                 document.getElementById('cepInput').value = "";
                 listarEnderecos();
@@ -120,4 +197,5 @@
         }
     </script>
 </body>
+
 </html>
