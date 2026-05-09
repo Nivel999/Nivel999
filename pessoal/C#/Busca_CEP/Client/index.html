@@ -2,56 +2,117 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Busca CEP - Entrevista</title>
+    <title>Busca CEP - Sistema Restrito</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
-        .container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; box-shadow: 2px 2px 10px #0000001a; }
-        input { padding: 10px; width: 200px; }
-        button { padding: 10px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
-        #resultado { margin-top: 20px; line-height: 1.6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; padding: 50px; background-color: #f0f2f5; }
+        .box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 400px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.3s; margin-top: 10px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .hidden { display: none; }
+        .card { background: #f8f9fa; padding: 15px; margin-top: 10px; border-radius: 8px; border-left: 4px solid #007bff; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Consultar Endereço</h2>
-        <input type="text" id="cepInput" placeholder="Digite o CEP (8 dígitos)">
-        <button onclick="buscarCep()">Buscar</button>
+    <div id="authContainer" class="box">
+        <h2 id="authTitle">Acessar Sistema</h2>
+        <input type="text" id="userInput" placeholder="Usuário">
+        <input type="password" id="passInput" placeholder="Senha">
+        <button class="btn-primary" onclick="login()">Entrar</button>
+        <button class="btn-success" onclick="cadastrar()">Criar Nova Conta</button>
+        <p id="authMsg" style="color: red; font-size: 14px;"></p>
+    </div>
 
-        <div id="resultado">
-            </div>
+    <div id="appContainer" class="box hidden">
+        <h2>Bem-vindo, <span id="nomeUsuario"></span></h2>
+        <button class="btn-danger" style="width: auto; padding: 5px 10px;" onclick="logout()">Sair</button>
+        <hr>
+        <input type="text" id="cepInput" placeholder="Digite o CEP">
+        <button class="btn-primary" onclick="salvarCep()">Buscar e Salvar</button>
+        
+        <h3>Meus Endereços Salvos</h3>
+        <div id="listaEnderecos"></div>
     </div>
 
     <script>
-        // Serve para buscar CEP
-        async function buscarCep() {
-            const cep = document.getElementById('cepInput').value;
-            const divResultado = document.getElementById('resultado');
-            
-            divResultado.innerHTML = "Buscando...";
+        const API_BASE = "http://localhost:5000/api";
+        let usuarioLogadoId = null;
 
-            try {
-                const response = await fetch(`http://localhost:5000/api/cep/${cep}`);
-                console.log("Teste:", response);
-                
-                if (!response.ok) throw new Error("CEP não encontrado ou erro no servidor");
+        // --- FUNÇÕES DE USUÁRIO ---
 
-                const dados = await response.json();
-                console.log("Esse é o Json:", dados);
+        async function login() {
+            const login = document.getElementById('userInput').value;
+            const senha = document.getElementById('passInput').value;
 
-                divResultado.innerHTML = `
-                    <p><strong>Logradouro:</strong> ${dados.logradouro}</p>
-                    <p><strong>Complemento:</strong> ${dados.complemento}</p>
-                    <p><strong>Bairro:</strong> ${dados.bairro}</p>
-                    <p><strong>Cidade:</strong> ${dados.localidade} - ${dados.uf}</p>
-                    <p><strong>ibge:</strong> ${dados.ibge}</p>
-                `;
-            } catch (erro) {
-                divResultado.innerHTML = `<span style="color:red">${erro.message}</span>`;
+            const res = await fetch(`${API_BASE}/usuario/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login, senha, nome: "" })
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                iniciarSessao(user);
+            } else {
+                document.getElementById('authMsg').innerText = "Falha no login.";
             }
         }
-        async function CriarCep(params) {
+
+        async function cadastrar() {
+            const login = document.getElementById('userInput').value;
+            const senha = document.getElementById('passInput').value;
+            const nome = prompt("Qual seu nome completo?");
+
+            const res = await fetch(`${API_BASE}/usuario/registrar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login, senha, nome })
+            });
+
+            if (res.ok) alert("Cadastrado! Agora clique em Entrar.");
+            else alert("Erro ao cadastrar (usuário já existe?)");
+        }
+
+        function iniciarSessao(user) {
+            usuarioLogadoId = user.id;
+            document.getElementById('nomeUsuario').innerText = user.nome;
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            listarEnderecos();
+        }
+
+        function logout() {
+            location.reload(); // Simplesmente recarrega a página
+        }
+
+        // --- FUNÇÕES DE CEP (ISOLADAS POR USUÁRIO) ---
+
+        async function salvarCep() {
+            const cep = document.getElementById('cepInput').value;
+            // Enviamos o ID do usuário logado na URL para o banco saber de quem é o endereço
+            const res = await fetch(`${API_BASE}/cep/${cep}/${usuarioLogadoId}`, { method: 'POST' });
             
+            if (res.ok) {
+                document.getElementById('cepInput').value = "";
+                listarEnderecos();
+            }
+        }
+
+        async function listarEnderecos() {
+            const res = await fetch(`${API_BASE}/cep/usuario/${usuarioLogadoId}`);
+            const enderecos = await res.json();
+            const div = document.getElementById('listaEnderecos');
+
+            div.innerHTML = enderecos.map(e => `
+                <div class="card">
+                    <strong>${e.cep}</strong><br>
+                    ${e.logradouro}, ${e.bairro}<br>
+                    ${e.localidade} - ${e.uf}
+                </div>
+            `).join('');
         }
     </script>
 </body>
