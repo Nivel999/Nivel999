@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Busca CEP - Sistema Restrito</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+            background-color: #f0f2f5;
+        }
+
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="authContainer" class="box">
+        <h2 id="authTitle">Acessar Sistema</h2>
+        <input type="text" id="userInput" placeholder="Usuário">
+        <input type="password" id="passInput" placeholder="Senha">
+        <button class="btn-primary" onclick="login()">Entrar</button>
+        <button class="btn-success" onclick="cadastrar()">Criar Nova Conta</button>
+        <p id="authMsg" style="color: red; font-size: 14px;"></p>
+    </div>
+
+    <div id="appContainer" class="box hidden">
+        <h2>Bem-vindo, <span id="nomeUsuario"></span></h2>
+        <button class="btn-danger" style="width: auto; padding: 5px 10px;" onclick="logout()">Sair</button>
+        <hr>
+        <input type="text" id="cepInput" placeholder="Digite o CEP">
+        <button class="btn-primary" onclick="salvarCep()">Buscar e Salvar</button>
+
+        <h3>Meus Endereços Salvos</h3>
+        <div id="listaEnderecos"></div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:5000/api";
+        let usuarioLogadoId = null;
+
+
+        //  FUNÇÕES DE USUÁRIO
+
+
+        async function login() {
+            const login = document.getElementById('userInput').value;
+            const senha = document.getElementById('passInput').value;
+
+            const res = await fetch(`${API_BASE}/usuario/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login, senha, nome: "" })
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                iniciarSessao(user);
+            } else {
+                document.getElementById('authMsg').innerText = "Falha no login.";
+            }
+        }
+
+        async function cadastrar() {
+            const login = document.getElementById('userInput').value;
+            const senha = document.getElementById('passInput').value;
+
+            if (!login || !senha) {
+                alert("Por favor, digite um usuário e uma senha nas caixinhas antes de clicar em criar conta!");
+                return;
+            }
+
+            const nome = prompt("Qual seu nome completo?");
+
+            if (!nome) {
+                alert("Você precisa digitar um nome para se cadastrar!");
+                return;
+            }
+
+            const res = await fetch(`${API_BASE}/usuario/registrar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Nome: nome, Login: login, Senha: senha })
+            });
+
+            if (res.ok) {
+                alert("Cadastrado com sucesso! Agora clique em Entrar.");
+                document.getElementById('userInput').value = "";
+                document.getElementById('passInput').value = "";
+            } else {
+                const erroDoServidor = await res.text();
+                alert("O servidor recusou: " + erroDoServidor);
+            }
+        }
+
+        function iniciarSessao(user) {
+            usuarioLogadoId = user.id;
+            document.getElementById('nomeUsuario').innerText = user.nome;
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            listarEnderecos();
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        //  FUNÇÕES DE CEP
+
+
+        async function salvarCep() {
+            const cep = document.getElementById('cepInput').value;
+            const res = await fetch(`${API_BASE}/cep/${cep}/${usuarioLogadoId}`, { method: 'POST' });
+
+            if (res.ok) {
+                document.getElementById('cepInput').value = "";
+                listarEnderecos();
+            }
+        }
+        async function apagarCep(id) {
+            if (!confirm("Tem certeza que deseja apagar este endereço?")) return;
+
+            const res = await fetch(`${API_BASE}/cep/${id}`, { method: 'DELETE' });
+
+            if (res.ok) {
+                listarEnderecos();
+            } else {
+                alert("Erro ao apagar o endereço.");
+            }
+        }
+
+        async function listarEnderecos() {
+            const res = await fetch(`${API_BASE}/cep/usuario/${usuarioLogadoId}`);
+            const enderecos = await res.json();
+            const div = document.getElementById('listaEnderecos');
+
+            div.innerHTML = enderecos.map(e => `
+                <div class="card">
+                    <strong>${e.cep}</strong><p>
+                    complemento: ${e.complemento}<p>
+                    Log. e bairro: ${e.logradouro}, ${e.bairro}<p>
+                    Localidade e uf: ${e.localidade} - ${e.uf}<p>
+                    IBGE: ${e.ibge}<p>
+                <button class="btn-danger" style="padding: 5px 10px; margin-top: 10px; font-size: 12px;" onclick="apagarCep(${e.id})">
+                    Excluir Endereço
+                </button>
+
+                    
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+
+</html>
