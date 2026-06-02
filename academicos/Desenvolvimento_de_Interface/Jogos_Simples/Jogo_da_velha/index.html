@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Velha - Design Premium</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d2ff 0%, #ff4a6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        /* --- PLACAR COM DESIGN THINKING --- */
+        .scoreboard {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .score-card {
+            flex: 1;
+            background: #1e293b;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-card .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9ca3af;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .score-card .score {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        /* Indicadores Dinâmicos de Turno */
+        .score-card.player-x.active {
+            border-color: #ff4a6b;
+            box-shadow: 0 0 15px rgba(255, 74, 107, 0.25);
+            background: #271c2a;
+        }
+
+        .score-card.player-o.active {
+            border-color: #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.25);
+            background: #162637;
+        }
+
+        .score-card.player-x .score { color: #ff4a6b; }
+        .score-card.player-o .score { color: #00d2ff; }
+        .score-card.ties .score { color: #eab308; }
+
+        .status {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            font-weight: 500;
+            color: #9ca3af;
+            height: 24px;
+        }
+
+        /* --- TABULEIRO REESTRUTURADO --- */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 12px;
+            background-color: #111827;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+            border: 1px solid #1f293d;
+        }
+
+        .cell {
+            background-color: #1f293d;
+            border: none;
+            border-radius: 10px;
+            font-size: 2.8rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cell:hover {
+            background-color: #2d3748;
+            transform: translateY(-2px);
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+        }
+
+        /* Estilização estilizada dos marcadores */
+        .cell.X {
+            color: #ff4a6b;
+            text-shadow: 0 0 10px rgba(255, 74, 107, 0.4);
+        }
+
+        .cell.O {
+            color: #00d2ff;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+        }
+
+        /* Efeito de vitória nas células corretas */
+        .cell.winner {
+            background-color: #059669 !important;
+            color: #ffffff !important;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* --- BOTÕES DE AÇÃO --- */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button.btn {
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #restartBtn {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+
+        #restartBtn:hover { background-color: #2563eb; }
+
+        #resetScoreBtn {
+            background-color: transparent;
+            color: #9ca3af;
+            border: 1px solid #374151;
+        }
+
+        #resetScoreBtn:hover {
+            background-color: #1f2937;
+            color: #f3f4f6;
+        }
+
+        button.btn:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tic Tac Toe</h1>
+    
+    <!-- Placar Dinâmico -->
+    <div class="scoreboard">
+        <div class="score-card player-x active" id="cardX">
+            <span class="label">Jogador X</span>
+            <span class="score" id="scoreX">0</span>
+        </div>
+        <div class="score-card ties">
+            <span class="label">Empates</span>
+            <span class="score" id="scoreTies">0</span>
+        </div>
+        <div class="score-card player-o" id="cardO">
+            <span class="label">Jogador O</span>
+            <span class="score" id="scoreO">0</span>
+        </div>
+    </div>
+
+    <div class="status" id="statusText">Sua vez, Jogador X</div>
+    
+    <div class="board" id="board">
+        <button class="cell" data-index="0"></button>
+        <button class="cell" data-index="1"></button>
+        <button class="cell" data-index="2"></button>
+        <button class="cell" data-index="3"></button>
+        <button class="cell" data-index="4"></button>
+        <button class="cell" data-index="5"></button>
+        <button class="cell" data-index="6"></button>
+        <button class="cell" data-index="7"></button>
+        <button class="cell" data-index="8"></button>
+    </div>
+
+    <div class="actions">
+        <button class="btn" id="restartBtn">Próxima Partida</button>
+        <button class="btn" id="resetScoreBtn">Zerar Placar</button>
+    </div>
+
+    <script>
+        const cells = document.querySelectorAll('.cell');
+        const statusText = document.getElementById('statusText');
+        const restartBtn = document.getElementById('restartBtn');
+        const resetScoreBtn = document.getElementById('resetScoreBtn');
+        const cardX = document.getElementById('cardX');
+        const cardO = document.getElementById('cardO');
+
+        let currentPlayer = 'X';
+        let gameState = ["", "", "", "", "", "", "", "", ""];
+        let isGameActive = true;
+
+        // Banco de dados interno do placar
+        let scores = { X: 0, O: 0, ties: 0 };
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
+            [0, 4, 8], [2, 4, 6]             // Diagonais
+        ];
+
+        function handleCellClick(e) {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            if (gameState[clickedCellIndex] !== "" || !isGameActive) return;
+
+            updateCell(clickedCell, clickedCellIndex);
+            checkResult();
+        }
+
+        function updateCell(cell, index) {
+            gameState[index] = currentPlayer;
+            cell.innerText = currentPlayer;
+            cell.classList.add(currentPlayer);
+        }
+
+        function checkResult() {
+            let roundWon = false;
+            let winningLine = [];
+
+            for (let i = 0; i < winningConditions.length; i++) {
+                const winCondition = winningConditions[i];
+                let a = gameState[winCondition[0]];
+                let b = gameState[winCondition[1]];
+                let c = gameState[winCondition[2]];
+
+                if (a === '' || b === '' || c === '') continue;
+                
+                if (a === b && b === c) {
+                    roundWon = true;
+                    winningLine = winCondition;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                statusText.innerText = `Jogador ${currentPlayer} venceu a rodada!`;
+                statusText.style.color = currentPlayer === 'X' ? '#ff4a6b' : '#00d2ff';
+                
+                // Aplica destaque visual na linha vencedora
+                winningLine.forEach(index => cells[index].classList.add('winner'));
+                
+                scores[currentPlayer]++;
+                updateScoreDisplay();
+                isGameActive = false;
+                return;
+            }
+
+            let roundDraw = !gameState.includes("");
+            if (roundDraw) {
+                statusText.innerText = "Fim de jogo: Empate! ⚖️";
+                statusText.style.color = "#eab308";
+                scores.ties++;
+                updateScoreDisplay();
+                isGameActive = false;
+                return;
+            }
+
+            // Alterna jogador e muda o foco visual do placar
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            statusText.innerText = `Sua vez, Jogador ${currentPlayer}`;
+            toggleActiveScoreCard();
+        }
+
+        function toggleActiveScoreCard() {
+            if (currentPlayer === 'X') {
+                cardX.classList.add('active');
+                cardO.classList.remove('active');
+            } else {
+                cardO.classList.add('active');
+                cardX.classList.remove('active');
+            }
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('scoreX').innerText = scores.X;
+            document.getElementById('scoreO').innerText = scores.O;
+            document.getElementById('scoreTies').innerText = scores.ties;
+        }
+
+        function nextRound() {
+            currentPlayer = 'X';
+            gameState = ["", "", "", "", "", "", "", "", ""];
+            isGameActive = true;
+            statusText.innerText = `Sua vez, Jogador X`;
+            statusText.style.color = "#9ca3af";
+            
+            toggleActiveScoreCard();
+            
+            cells.forEach(cell => {
+                cell.innerText = "";
+                cell.classList.remove('X', 'O', 'winner');
+            });
+        }
+
+        function resetAllScores() {
+            scores = { X: 0, O: 0, ties: 0 };
+            updateScoreDisplay();
+            nextRound();
+        }
+
+        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+        restartBtn.addEventListener('click', nextRound);
+        resetScoreBtn.addEventListener('click', resetAllScores);
+    </script>
+</body>
+</html>

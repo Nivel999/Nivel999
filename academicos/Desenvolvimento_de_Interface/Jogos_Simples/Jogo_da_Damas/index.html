@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Dama - Modo Combo Ativado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121214;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2.3rem;
+            color: #4ecca3;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+            transition: color 0.3s;
+            height: 30px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            border: 4px solid #242629;
+            border-radius: 8px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+            background-color: #242629;
+        }
+
+        @media (max-width: 520px) {
+            .board {
+                grid-template-columns: repeat(8, 40px);
+                grid-template-rows: repeat(8, 40px);
+            }
+            .piece {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 1rem !important;
+            }
+        }
+
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .light {
+            background-color: #e5e9f0;
+        }
+
+        .dark {
+            background-color: #4c566a;
+        }
+
+        /* Área demarcada para movimento/captura */
+        .square.highlight::before {
+            content: "";
+            width: 18px;
+            height: 18px;
+            background-color: #4ecca3;
+            border-radius: 50%;
+            opacity: 0.7;
+            position: absolute;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .square.highlight {
+            cursor: pointer;
+        }
+
+        .piece {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: inset 0 -4px 6px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+            z-index: 1;
+        }
+
+        .piece.red {
+            background-color: #ff4a5a;
+            border: 2px solid #b32d3a;
+        }
+
+        .piece.blue {
+            background-color: #3498db;
+            border: 2px solid #217dbb;
+        }
+
+        .piece.selected {
+            transform: scale(1.15);
+            box-shadow: 0 0 15px #4ecca3, inset 0 -4px 6px rgba(0,0,0,0.4);
+            border-color: #4ecca3;
+        }
+
+        .king::after {
+            content: "👑";
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #4ecca3;
+            color: #121214;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #45b393;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Jogo de Dama</h1>
+    <div class="status" id="statusText">Vez do Jogador Vermelho</div>
+    
+    <div class="board" id="board"></div>
+
+    <button id="restartBtn">Reiniciar Jogo</button>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const statusText = document.getElementById('statusText');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let board = [];
+        let turn = 'R'; 
+        let selectedPiece = null;
+        let validMoves = []; 
+        let isComboActive = false; // Controla se o jogador está preso em uma sequência de capturas
+
+        function initBoard() {
+            board = [];
+            for (let r = 0; r < 8; r++) {
+                let row = [];
+                for (let c = 0; c < 8; c++) {
+                    if ((r + c) % 2 === 1) {
+                        if (r < 3) row.push({ player: 'B', isKing: false });
+                        else if (r > 4) row.push({ player: 'R', isKing: false });
+                        else row.push(null);
+                    } else {
+                        row.push(null);
+                    }
+                }
+                board.push(row);
+            }
+        }
+
+        function renderBoard() {
+            boardElement.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const square = document.createElement('div');
+                    square.classList.add('square');
+                    square.classList.add((r + c) % 2 === 1 ? 'dark' : 'light');
+                    square.dataset.row = r;
+                    square.dataset.col = c;
+
+                    const isAnAvailableMove = validMoves.some(move => move.r === r && move.c === c);
+                    if (isAnAvailableMove) {
+                        square.classList.add('highlight');
+                    }
+
+                    const pieceData = board[r][c];
+                    if (pieceData) {
+                        const piece = document.createElement('div');
+                        piece.classList.add('piece');
+                        piece.classList.add(pieceData.player === 'R' ? 'red' : 'blue');
+                        if (pieceData.isKing) piece.classList.add('king');
+                        
+                        if (selectedPiece && selectedPiece.r === r && selectedPiece.c === c) {
+                            piece.classList.add('selected');
+                        }
+
+                        piece.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            handlePieceClick(r, c);
+                        });
+                        square.appendChild(piece);
+                    }
+
+                    square.addEventListener('click', () => handleSquareClick(r, c));
+                    boardElement.appendChild(square);
+                }
+            }
+            updateStatus();
+        }
+
+        function handlePieceClick(r, c) {
+            // Se estiver no meio de um combo, não pode mudar de peça! Tem que terminar a jogada.
+            if (isComboActive) return; 
+
+            if (board[r][c].player === turn) {
+                selectedPiece = { r, c };
+                calculateValidMoves(r, c, false); // Procura tanto andadas normais quanto capturas
+                renderBoard();
+            }
+        }
+
+        // Calcula os movimentos válidos. Se 'onlyJumps' for true, filtra apenas capturas (usado no combo)
+        function calculateValidMoves(fromR, fromC, onlyJumps = false) {
+            validMoves = [];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const moveResult = validateMove(fromR, fromC, r, c);
+                    if (moveResult.isValid) {
+                        if (onlyJumps && !moveResult.isJump) continue;
+                        validMoves.push({ r, c });
+                    }
+                }
+            }
+        }
+
+        // Retorna se existem capturas disponíveis para uma determinada posição
+        function getCaptureMoves(fromR, fromC) {
+            let jumps = [];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const res = validateMove(fromR, fromC, r, c);
+                    if (res.isValid && res.isJump) {
+                        jumps.push({ r, c });
+                    }
+                }
+            }
+            return jumps;
+        }
+
+        function handleSquareClick(r, c) {
+            if (!selectedPiece) return;
+
+            const isMoveValid = validMoves.some(move => move.r === r && move.c === c);
+
+            if (isMoveValid) {
+                const moveResult = validateMove(selectedPiece.r, selectedPiece.c, r, c);
+
+                // Executa o movimento físico da peça
+                board[r][c] = board[selectedPiece.r][selectedPiece.c];
+                board[selectedPiece.r][selectedPiece.c] = null;
+
+                // Remove a peça capturada, se houver
+                if (moveResult.isJump) {
+                    board[moveResult.jumpedR][moveResult.jumpedC] = null;
+                }
+
+                // Promoção para Rei/Rainha
+                let becameKing = false;
+                if (turn === 'R' && r === 0 && !board[r][c].isKing) { board[r][c].isKing = true; becameKing = true; }
+                if (turn === 'B' && r === 7 && !board[r][c].isKing) { board[r][c].isKing = true; becameKing = true; }
+
+                // Lógica de Multi-captura (Combo)
+                if (moveResult.isJump && !becameKing) {
+                    const nextJumps = getCaptureMoves(r, c);
+                    if (nextJumps.length > 0) {
+                        // Mantém o mesmo jogador, tranca a peça e recalcula apenas os saltos
+                        selectedPiece = { r, c };
+                        validMoves = nextJumps;
+                        isComboActive = true;
+                        renderBoard();
+                        checkGameOver();
+                        return; // Interrompe aqui para não passar o turno
+                    }
+                }
+
+                // Finaliza o turno normalmente caso não haja mais combos
+                turn = turn === 'R' ? 'B' : 'R';
+                selectedPiece = null;
+                validMoves = [];
+                isComboActive = false;
+                renderBoard();
+                checkGameOver();
+            } else {
+                // Cancela a seleção se clicar fora (desde que não esteja no meio de um combo)
+                if (!isComboActive) {
+                    selectedPiece = null;
+                    validMoves = [];
+                    renderBoard();
+                }
+            }
+        }
+
+        function validateMove(fromR, fromC, toR, toC) {
+            if (board[toR][toC] !== null) return { isValid: false }; 
+            if ((toR + toC) % 2 === 0) return { isValid: false }; 
+
+            const piece = board[fromR][fromC];
+            const dr = toR - fromR;
+            const dc = toC - fromC;
+            const absDr = Math.abs(dr);
+            const absDc = Math.abs(dc);
+
+            if (absDr !== absDc) return { isValid: false }; 
+
+            const stepR = dr / absDr;
+            const stepC = dc / absDc;
+
+            // --- LÓGICA DA RAINHA (DAMA LONGA) ---
+            if (piece.isKing) {
+                let currentR = fromR + stepR;
+                let currentC = fromC + stepC;
+                let piecesOnPath = [];
+
+                while (currentR !== toR && currentC !== toC) {
+                    if (board[currentR][currentC] !== null) {
+                        piecesOnPath.push({
+                            r: currentR,
+                            c: currentC,
+                            piece: board[currentR][currentC]
+                        });
+                    }
+                    currentR += stepR;
+                    currentC += stepC;
+                }
+
+                if (piecesOnPath.length === 0) {
+                    return { isValid: true, isJump: false };
+                } 
+                else if (piecesOnPath.length === 1) {
+                    const jumped = piecesOnPath[0];
+                    if (jumped.piece.player !== piece.player) {
+                        return { isValid: true, isJump: true, jumpedR: jumped.r, jumpedC: jumped.c };
+                    }
+                }
+                return { isValid: false }; 
+            }
+
+            // --- LÓGICA DA PEÇA COMUM ---
+            const direction = piece.player === 'R' ? -1 : 1;
+
+            if (absDr === 1) {
+                if (dr !== direction) return { isValid: false }; 
+                return { isValid: true, isJump: false };
+            }
+
+            if (absDr === 2) {
+                const jumpedR = fromR + stepR;
+                const jumpedC = fromC + stepC;
+                const jumpedPiece = board[jumpedR][jumpedC];
+
+                if (jumpedPiece && jumpedPiece.player !== piece.player) {
+                    return { isValid: true, isJump: true, jumpedR, jumpedC };
+                }
+            }
+
+            return { isValid: false };
+        }
+
+        function updateStatus() {
+            if (isComboActive) {
+                statusText.innerText = "💥 Combo! Continue capturando!";
+                statusText.style.color = "#4ecca3";
+                return;
+            }
+
+            if (turn === 'R') {
+                statusText.innerText = "Vez do Jogador Vermelho";
+                statusText.style.color = "#ff4a5a";
+            } else if (turn === 'B') {
+                statusText.innerText = "Vez do Jogador Azul";
+                statusText.style.color = "#3498db";
+            }
+        }
+
+        function checkGameOver() {
+            let redCount = 0;
+            let blueCount = 0;
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r][c]?.player === 'R') redCount++;
+                    if (board[r][c]?.player === 'B') blueCount++;
+                }
+            }
+
+            if (redCount === 0) {
+                statusText.innerText = "Jogador Azul Venceu! 🎉";
+                statusText.style.color = "#3498db";
+                turn = null;
+            } else if (blueCount === 0) {
+                statusText.innerText = "Jogador Vermelho Venceu! 🎉";
+                statusText.style.color = "#ff4a5a";
+                turn = null; 
+            }
+        }
+
+        function startGame() {
+            turn = 'R';
+            selectedPiece = null;
+            validMoves = [];
+            isComboActive = false;
+            initBoard();
+            renderBoard();
+        }
+
+        restartBtn.addEventListener('click', startGame);
+        startGame();
+    </script>
+</body>
+</html>
