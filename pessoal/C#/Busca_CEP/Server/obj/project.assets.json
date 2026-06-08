@@ -2049,11 +2049,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Davi\\Meus_Projetos_Academicos_e_Pessoais\\pessoal\\C#\\Busca_CEP\\Server\\Busca_CEP.csproj",
+      "projectUniqueName": "C:\\Users\\Davi\\GitHub-Projetos-Pessoais\\Meus_Projetos_Academicos_e_Pessoais\\pessoal\\C#\\Busca_CEP\\Server\\Busca_CEP.csproj",
       "projectName": "Busca_CEP",
-      "projectPath": "C:\\Users\\Davi\\Meus_Projetos_Academicos_e_Pessoais\\pessoal\\C#\\Busca_CEP\\Server\\Busca_CEP.csproj",
+      "projectPath": "C:\\Users\\Davi\\GitHub-Projetos-Pessoais\\Meus_Projetos_Academicos_e_Pessoais\\pessoal\\C#\\Busca_CEP\\Server\\Busca_CEP.csproj",
       "packagesPath": "C:\\Users\\Davi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Davi\\Meus_Projetos_Academicos_e_Pessoais\\pessoal\\C#\\Busca_CEP\\Server\\obj\\",
+      "outputPath": "C:\\Users\\Davi\\GitHub-Projetos-Pessoais\\Meus_Projetos_Academicos_e_Pessoais\\pessoal\\C#\\Busca_CEP\\Server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Davi\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -2128,7 +2128,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

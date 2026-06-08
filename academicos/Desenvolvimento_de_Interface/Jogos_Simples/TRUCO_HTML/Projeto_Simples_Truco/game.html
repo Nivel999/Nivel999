@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truco 12 Pontos - Simplificado</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js"></script>   
+</head>
+
+<body>
+
+    <div class="game-container">
+        <div class="scoreboard">
+            <div>
+                <div>Seu Time</div>
+                <div class="points" id="score-t1">0</div>
+            </div>
+            <div>
+                <div id="match-value">VALENDO 1 PONTO</div>
+                <div id="info-log" style="color: #ffeb3b; font-size: 0.9rem;">Sua vez!</div>
+            </div>
+            <div>
+                <div>Adversários</div>
+                <div class="points" id="score-t2">0</div>
+            </div>
+        </div>
+
+        <div class="poker-table">
+            <div class="player-seat seat-top">
+                <div class="player-label">Parceiro</div>
+                <div class="hand-slots" id="hand-2"></div>
+            </div>
+            <div class="player-seat seat-right">
+                <div class="player-label">Oponente 1</div>
+                <div class="hand-slots" id="hand-1"></div>
+            </div>
+            <div class="player-seat seat-left">
+                <div class="player-label">Oponente 2</div>
+                <div class="hand-slots" id="hand-3"></div>
+            </div>
+            <div class="player-seat seat-bottom">
+                <div class="hand-slots" id="hand-0"></div>
+                <div class="player-label">Você</div>
+            </div>
+
+            <div class="center-arena">
+                <div class="played-card-slot slot-top" id="play-slot-2"></div>
+                <div class="played-card-slot slot-right" id="play-slot-1"></div>
+                <div class="played-card-slot slot-left" id="play-slot-3"></div>
+                <div class="played-card-slot slot-bottom" id="play-slot-0"></div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn" id="btn-truco" onclick="pedirTruco()">PEDIR TRUCO</button>
+        </div>
+    </div>
+
+    <script>
+
+
+        //Modelo JavaScript
+
+
+
+    </script>
+</body>
+
+</html>
