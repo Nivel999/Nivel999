@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Forca</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --keyboard-bg: #ecf0f1;
+            --keyboard-hover: #bdc3c7;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        canvas {
+            border: 2px solid var(--keyboard-bg);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #fafafa;
+        }
+
+        #word-display {
+            font-size: 2.5em;
+            letter-spacing: 15px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            min-height: 60px;
+        }
+
+        #keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .key {
+            background-color: var(--keyboard-bg);
+            border: none;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            color: var(--primary-color);
+        }
+
+        .key:hover:not(:disabled) {
+            background-color: var(--keyboard-hover);
+            transform: translateY(-2px);
+        }
+
+        .key:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .key.correct {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .key.wrong {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        #message {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            min-height: 35px;
+        }
+
+        .win { color: var(--success-color); }
+        .lose { color: var(--accent-color); }
+
+        #reset-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: none; /* Escondido inicialmente */
+            margin: 0 auto;
+        }
+
+        #reset-btn:hover {
+            background-color: #1a252f;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Jogo da Forca</h1>
+    
+    <canvas id="hangman" width="250" height="250"></canvas>
+    
+    <div id="word-display"></div>
+    
+    <div id="message"></div>
+    
+    <div id="keyboard"></div>
+    
+    <button id="reset-btn" onclick="initGame()">Jogar Novamente</button>
+</div>
+
+<script>
+    // --- CONFIGURAÇÕES E DADOS ---
+    const words = [
+        "ALGORITMO", "JAVASCRIPT", "PROGRAMADOR", "COMPUTADOR",
+        "TECLADO", "DESENVOLVEDOR", "INTERNET", "SISTEMA",
+        "VARIAVEL", "FUNCAO", "BIBLIOTECA", "NAVEGADOR"
+    ];
+    
+    const maxMistakes = 6;
+    let chosenWord = "";
+    let guessedLetters = [];
+    let mistakes = 0;
+
+    // Elementos do DOM
+    const wordDisplay = document.getElementById("word-display");
+    const keyboard = document.getElementById("keyboard");
+    const message = document.getElementById("message");
+    const resetBtn = document.getElementById("reset-btn");
+    const canvas = document.getElementById("hangman");
+    const ctx = canvas.getContext("2d");
+
+    // --- LÓGICA DO JOGO ---
+
+    // Inicializa ou reinicia o jogo
+    function initGame() {
+        // Sorteia uma palavra aleatória
+        chosenWord = words[Math.floor(Math.random() * words.length)];
+        guessedLetters = [];
+        mistakes = 0;
+
+        // Limpa a interface
+        message.innerText = "";
+        message.className = "";
+        resetBtn.style.display = "none";
+        
+        drawGallows(); // Desenha a forca inicial vazia
+        renderWord();
+        renderKeyboard();
+    }
+
+    // Atualiza a exibição da palavra oculta
+    function renderWord() {
+        const display = chosenWord.split("").map(letter => {
+            return guessedLetters.includes(letter) ? letter : "_";
+        }).join("");
+        
+        wordDisplay.innerText = display;
+
+        // Verifica condição de vitória
+        if (!display.includes("_")) {
+            endGame(true);
+        }
+    }
+
+    // Cria os botões do teclado A-Z
+    function renderKeyboard() {
+        keyboard.innerHTML = "";
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        
+        alphabet.forEach(letter => {
+            const btn = document.createElement("button");
+            btn.className = "key";
+            btn.innerText = letter;
+            btn.id = `btn-${letter}`;
+            btn.addEventListener("click", () => handleGuess(letter));
+            keyboard.appendChild(btn);
+        });
+    }
+
+    // Lida com a tentativa de uma letra
+    function handleGuess(letter) {
+        // Se o jogo acabou ou a letra já foi tentada, ignora
+        if (mistakes >= maxMistakes || guessedLetters.includes(letter)) return;
+
+        guessedLetters.push(letter);
+        const btn = document.getElementById(`btn-${letter}`);
+        btn.disabled = true; // Desabilita o botão
+
+        if (chosenWord.includes(letter)) {
+            // Acertou
+            btn.classList.add("correct");
+            renderWord();
+        } else {
+            // Errou
+            btn.classList.add("wrong");
+            mistakes++;
+            drawHangmanPart();
+            
+            // Verifica condição de derrota
+            if (mistakes >= maxMistakes) {
+                endGame(false);
+            }
+        }
+    }
+
+    // Finaliza o jogo
+    function endGame(isWin) {
+        // Desabilita todo o teclado
+        const keys = document.querySelectorAll(".key");
+        keys.forEach(key => key.disabled = true);
+
+        resetBtn.style.display = "block"; // Mostra o botão de reiniciar
+
+        if (isWin) {
+            message.innerText = "🎉 Você Venceu!";
+            message.className = "win";
+        } else {
+            message.innerText = `💀 Você Perdeu! A palavra era: ${chosenWord}`;
+            message.className = "lose";
+            wordDisplay.innerText = chosenWord; // Revela a palavra inteira
+        }
+    }
+
+    // --- LÓGICA DE DESENHO (CANVAS) ---
+
+    // Desenha a estrutura da forca
+    function drawGallows() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#2c3e50";
+        ctx.beginPath();
+        
+        // Base
+        ctx.moveTo(20, 230);
+        ctx.lineTo(100, 230);
+        
+        // Mastro
+        ctx.moveTo(60, 230);
+        ctx.lineTo(60, 20);
+        
+        // Teto
+        ctx.moveTo(60, 20);
+        ctx.lineTo(150, 20);
+        
+        // Corda
+        ctx.moveTo(150, 20);
+        ctx.lineTo(150, 50);
+        
+        ctx.stroke();
+    }
+
+    // Desenha as partes do corpo do boneco dependendo do número de erros
+    function drawHangmanPart() {
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#e74c3c"; // Cor do boneco
+        ctx.beginPath();
+
+        switch(mistakes) {
+            case 1: // Cabeça
+                ctx.arc(150, 75, 25, 0, Math.PI * 2);
+                break;
+            case 2: // Corpo
+                ctx.moveTo(150, 100);
+                ctx.lineTo(150, 160);
+                break;
+            case 3: // Braço Esquerdo
+                ctx.moveTo(150, 120);
+                ctx.lineTo(120, 150);
+                break;
+            case 4: // Braço Direito
+                ctx.moveTo(150, 120);
+                ctx.lineTo(180, 150);
+                break;
+            case 5: // Perna Esquerda
+                ctx.moveTo(150, 160);
+                ctx.lineTo(120, 200);
+                break;
+            case 6: // Perna Direita
+                ctx.moveTo(150, 160);
+                ctx.lineTo(180, 200);
+                break;
+        }
+        ctx.stroke();
+    }
+
+    // Inicia o jogo automaticamente ao carregar a página
+    window.onload = initGame;
+</script>
+
+</body>
+</html>
