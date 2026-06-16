@@ -3,8 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da Velha - Design Premium</title>
+    <title>Jogo da Velha - Temas Dinâmicos</title>
     <style>
+        /* --- VARIÁVEIS DE TEMA --- */
+        :root {
+            /* Tema Cyber Neon (Padrão) */
+            --bg-body: #0b0f19;
+            --bg-card: #1e293b;
+            --bg-board: #111827;
+            --bg-cell: #1f293d;
+            --bg-cell-hover: #2d3748;
+            --color-x: #ff4a6b;
+            --color-o: #00d2ff;
+            --color-text: #f3f4f6;
+            --color-text-muted: #9ca3af;
+            --color-win: #059669;
+            --btn-primary: #3b82f6;
+            --btn-primary-hover: #2563eb;
+        }
+
+        body[data-theme="blue"] {
+            /* Tema Oceano (Azul) */
+            --bg-body: #0a1128;
+            --bg-card: #162447;
+            --bg-board: #1f4068;
+            --bg-cell: #1b3358;
+            --bg-cell-hover: #264673;
+            --color-x: #00e5ff;
+            --color-o: #4e89ae;
+            --color-text: #e0e7ff;
+            --color-text-muted: #8da4d0;
+            --color-win: #22c55e;
+            --btn-primary: #2563eb;
+            --btn-primary-hover: #1d4ed8;
+        }
+
+        body[data-theme="red"] {
+            /* Tema Vulcão (Vermelho) */
+            --bg-body: #1a0505;
+            --bg-card: #2b0f0f;
+            --bg-board: #3b1c1c;
+            --bg-cell: #4a2525;
+            --bg-cell-hover: #5c3030;
+            --color-x: #ff3333;
+            --color-o: #ff9933;
+            --color-text: #fecaca;
+            --color-text-muted: #fca5a5;
+            --color-win: #ef4444;
+            --btn-primary: #dc2626;
+            --btn-primary-hover: #b91c1c;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,27 +62,53 @@
         }
 
         body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
+            background-color: var(--bg-body);
+            color: var(--color-text);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             flex-direction: column;
             padding: 20px;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* --- BOTÃO DE CONFIGURAÇÕES --- */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--bg-cell);
+            color: var(--color-text);
+            font-size: 1.5rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .settings-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: var(--bg-cell);
         }
 
         h1 {
             margin-bottom: 5px;
             font-size: 2.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #00d2ff 0%, #ff4a6b 100%);
+            background: linear-gradient(135deg, var(--color-o) 0%, var(--color-x) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -1px;
         }
 
-        /* --- PLACAR COM DESIGN THINKING --- */
+        /* --- PLACAR --- */
         .scoreboard {
             display: flex;
             gap: 15px;
@@ -44,7 +119,7 @@
 
         .score-card {
             flex: 1;
-            background: #1e293b;
+            background: var(--bg-card);
             padding: 12px;
             border-radius: 12px;
             text-align: center;
@@ -57,7 +132,7 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #9ca3af;
+            color: var(--color-text-muted);
             display: block;
             margin-bottom: 4px;
         }
@@ -67,46 +142,45 @@
             font-weight: 700;
         }
 
-        /* Indicadores Dinâmicos de Turno */
+        /* Indicadores de Turno */
         .score-card.player-x.active {
-            border-color: #ff4a6b;
-            box-shadow: 0 0 15px rgba(255, 74, 107, 0.25);
-            background: #271c2a;
+            border-color: var(--color-x);
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
         }
 
         .score-card.player-o.active {
-            border-color: #00d2ff;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.25);
-            background: #162637;
+            border-color: var(--color-o);
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
         }
 
-        .score-card.player-x .score { color: #ff4a6b; }
-        .score-card.player-o .score { color: #00d2ff; }
+        .score-card.player-x .score { color: var(--color-x); }
+        .score-card.player-o .score { color: var(--color-o); }
         .score-card.ties .score { color: #eab308; }
 
         .status {
             font-size: 1.1rem;
             margin-bottom: 25px;
             font-weight: 500;
-            color: #9ca3af;
+            color: var(--color-text-muted);
             height: 24px;
         }
 
-        /* --- TABULEIRO REESTRUTURADO --- */
+        /* --- TABULEIRO --- */
         .board {
             display: grid;
             grid-template-columns: repeat(3, 100px);
             grid-template-rows: repeat(3, 100px);
             gap: 12px;
-            background-color: #111827;
+            background-color: var(--bg-board);
             padding: 12px;
             border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-            border: 1px solid #1f293d;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--bg-cell);
+            transition: background-color 0.4s ease;
         }
 
         .cell {
-            background-color: #1f293d;
+            background-color: var(--bg-cell);
             border: none;
             border-radius: 10px;
             font-size: 2.8rem;
@@ -115,11 +189,11 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
         }
 
         .cell:hover {
-            background-color: #2d3748;
+            background-color: var(--bg-cell-hover);
             transform: translateY(-2px);
         }
 
@@ -127,26 +201,23 @@
             transform: scale(0.95);
         }
 
-        /* Estilização estilizada dos marcadores */
         .cell.X {
-            color: #ff4a6b;
-            text-shadow: 0 0 10px rgba(255, 74, 107, 0.4);
+            color: var(--color-x);
+            text-shadow: 0 0 10px rgba(0,0,0,0.4);
         }
 
         .cell.O {
-            color: #00d2ff;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+            color: var(--color-o);
+            text-shadow: 0 0 10px rgba(0,0,0,0.4);
         }
 
-        /* Efeito de vitória nas células corretas */
         .cell.winner {
-            background-color: #059669 !important;
+            background-color: var(--color-win) !important;
             color: #ffffff !important;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
             animation: pulse 1.5s infinite;
         }
 
-        /* --- BOTÕES DE AÇÃO --- */
+        /* --- BOTÕES --- */
         .actions {
             display: flex;
             gap: 10px;
@@ -163,26 +234,79 @@
             transition: all 0.2s ease;
         }
 
-        #restartBtn {
-            background-color: #3b82f6;
+        .btn.primary {
+            background-color: var(--btn-primary);
             color: #fff;
         }
 
-        #restartBtn:hover { background-color: #2563eb; }
+        .btn.primary:hover { background-color: var(--btn-primary-hover); }
 
-        #resetScoreBtn {
+        .btn.secondary {
             background-color: transparent;
-            color: #9ca3af;
-            border: 1px solid #374151;
+            color: var(--color-text-muted);
+            border: 1px solid var(--bg-cell);
         }
 
-        #resetScoreBtn:hover {
-            background-color: #1f2937;
-            color: #f3f4f6;
+        .btn.secondary:hover {
+            background-color: var(--bg-cell);
+            color: var(--color-text);
         }
 
-        button.btn:active {
-            transform: scale(0.98);
+        /* --- MODAL DE CONFIGURAÇÕES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: var(--color-text);
+        }
+
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 25px;
+            background: var(--bg-cell);
+            color: var(--color-text);
+            border: 1px solid var(--bg-board);
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
 
         @keyframes pulse {
@@ -194,9 +318,11 @@
 </head>
 <body>
 
+    <!-- Botão de Configurações -->
+    <button class="settings-btn" id="openSettingsBtn" title="Configurações">⚙️</button>
+
     <h1>Tic Tac Toe</h1>
     
-    <!-- Placar Dinâmico -->
     <div class="scoreboard">
         <div class="score-card player-x active" id="cardX">
             <span class="label">Jogador X</span>
@@ -227,11 +353,30 @@
     </div>
 
     <div class="actions">
-        <button class="btn" id="restartBtn">Próxima Partida</button>
-        <button class="btn" id="resetScoreBtn">Zerar Placar</button>
+        <button class="btn primary" id="restartBtn">Próxima Partida</button>
+        <button class="btn secondary" id="resetScoreBtn">Zerar Placar</button>
+    </div>
+
+    <!-- Menu Modal de Configurações -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <h2>Configurações</h2>
+            <label for="themeSelect" style="display: block; margin-bottom: 8px; color: var(--color-text-muted);">Escolha o Tema:</label>
+            <select id="themeSelect">
+                <option value="default">Cyber Neon (Padrão)</option>
+                <option value="blue">Oceano (Azul)</option>
+                <option value="red">Vulcão (Vermelho)</option>
+            </select>
+            
+            <div class="modal-actions">
+                <button class="btn secondary" id="closeSettingsBtn">Cancelar</button>
+                <button class="btn primary" id="saveSettingsBtn">Salvar</button>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Lógica do Jogo
         const cells = document.querySelectorAll('.cell');
         const statusText = document.getElementById('statusText');
         const restartBtn = document.getElementById('restartBtn');
@@ -242,14 +387,12 @@
         let currentPlayer = 'X';
         let gameState = ["", "", "", "", "", "", "", "", ""];
         let isGameActive = true;
-
-        // Banco de dados interno do placar
         let scores = { X: 0, O: 0, ties: 0 };
 
         const winningConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
-            [0, 4, 8], [2, 4, 6]             // Diagonais
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]            
         ];
 
         function handleCellClick(e) {
@@ -289,9 +432,8 @@
 
             if (roundWon) {
                 statusText.innerText = `Jogador ${currentPlayer} venceu a rodada!`;
-                statusText.style.color = currentPlayer === 'X' ? '#ff4a6b' : '#00d2ff';
+                statusText.style.color = currentPlayer === 'X' ? 'var(--color-x)' : 'var(--color-o)';
                 
-                // Aplica destaque visual na linha vencedora
                 winningLine.forEach(index => cells[index].classList.add('winner'));
                 
                 scores[currentPlayer]++;
@@ -310,9 +452,9 @@
                 return;
             }
 
-            // Alterna jogador e muda o foco visual do placar
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
             statusText.innerText = `Sua vez, Jogador ${currentPlayer}`;
+            statusText.style.color = "var(--color-text-muted)";
             toggleActiveScoreCard();
         }
 
@@ -337,7 +479,7 @@
             gameState = ["", "", "", "", "", "", "", "", ""];
             isGameActive = true;
             statusText.innerText = `Sua vez, Jogador X`;
-            statusText.style.color = "#9ca3af";
+            statusText.style.color = "var(--color-text-muted)";
             
             toggleActiveScoreCard();
             
@@ -356,6 +498,57 @@
         cells.forEach(cell => cell.addEventListener('click', handleCellClick));
         restartBtn.addEventListener('click', nextRound);
         resetScoreBtn.addEventListener('click', resetAllScores);
+
+
+        // --- LÓGICA DE TEMAS E CONFIGURAÇÕES ---
+        const modal = document.getElementById('settingsModal');
+        const openSettingsBtn = document.getElementById('openSettingsBtn');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        const themeSelect = document.getElementById('themeSelect');
+
+        // Carrega o tema salvo ao iniciar o jogo
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('tictactoe-theme');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme', savedTheme);
+                themeSelect.value = savedTheme;
+            }
+        }
+
+        openSettingsBtn.addEventListener('click', () => {
+            // Garante que o select reflete o tema atual antes de abrir
+            themeSelect.value = document.body.getAttribute('data-theme') || 'default';
+            modal.classList.add('active');
+        });
+
+        closeSettingsBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        saveSettingsBtn.addEventListener('click', () => {
+            const selectedTheme = themeSelect.value;
+            
+            if (selectedTheme === 'default') {
+                document.body.removeAttribute('data-theme');
+                localStorage.removeItem('tictactoe-theme');
+            } else {
+                document.body.setAttribute('data-theme', selectedTheme);
+                localStorage.setItem('tictactoe-theme', selectedTheme);
+            }
+
+            // Atualiza a cor do texto de status caso o jogo já tenha acabado
+            if (!isGameActive && !gameState.includes("")) {
+                 statusText.style.color = "#eab308";
+            } else if (!isGameActive) {
+                 statusText.style.color = currentPlayer === 'X' ? 'var(--color-x)' : 'var(--color-o)';
+            }
+
+            modal.classList.remove('active');
+        });
+
+        // Inicializa o tema ao carregar a página
+        loadTheme();
     </script>
 </body>
 </html>

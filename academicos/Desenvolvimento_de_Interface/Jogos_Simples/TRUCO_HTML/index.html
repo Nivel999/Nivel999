@@ -16,6 +16,17 @@
             --joker-text: #8e44ad;
         }
 
+        /* Temas de cores (Aplicados no body) */
+        body.theme-blue {
+            --table-green: #1e3799;
+            --table-dark: #0c2461;
+        }
+        
+        body.theme-red {
+            --table-green: #b71540;
+            --table-dark: #600b21;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -33,8 +44,72 @@
             min-height: 100vh;
             color: white;
             overflow: hidden;
+            transition: background 0.3s;
         }
 
+        /* --------- Menus --------- */
+        .menu-container {
+            background: #222;
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid var(--gold-accent);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .menu-container h1, .menu-container h2 {
+            color: var(--gold-accent);
+            margin-bottom: 10px;
+        }
+
+        .menu-btn {
+            background: var(--table-green);
+            color: white;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .menu-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--gold-accent);
+        }
+
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .settings-group label {
+            color: #ccc;
+        }
+
+        .settings-group select {
+            padding: 10px;
+            font-size: 1rem;
+            background: #333;
+            color: white;
+            border: 1px solid var(--gold-accent);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Classe utilitária para esconder elementos */
+        .hidden {
+            display: none !important;
+        }
+
+        /* --------- Jogo --------- */
         .game-container {
             width: 100%;
             max-width: 1000px;
@@ -220,6 +295,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
         .btn-truco { background: #e67e22; color: white; }
+        .btn-menu-back { background: #555; color: white; }
         .btn:disabled { background: #555 !important; color: #888 !important; cursor: not-allowed; }
 
         /* Modais de Truco/Aposta */
@@ -251,7 +327,29 @@
 </head>
 <body>
 
-    <div class="game-container">
+    <!-- Menu Principal -->
+    <div id="main-menu" class="menu-container">
+        <h1>TRUCO 12 PONTOS</h1>
+        <button class="menu-btn" onclick="startGame()">Jogar Nova Partida</button>
+        <button class="menu-btn" onclick="openSettings()">Configurações</button>
+    </div>
+
+    <!-- Menu de Configurações -->
+    <div id="settings-menu" class="menu-container hidden">
+        <h2>CONFIGURAÇÕES</h2>
+        <div class="settings-group">
+            <label for="theme-select">Cor da Mesa (Tema):</label>
+            <select id="theme-select">
+                <option value="green">Verde Clássico</option>
+                <option value="blue">Azul Casino</option>
+                <option value="red">Vermelho Sangue</option>
+            </select>
+        </div>
+        <button class="menu-btn" onclick="saveSettings()">Salvar e Voltar</button>
+    </div>
+
+    <!-- Jogo (Oculto inicialmente) -->
+    <div class="game-container hidden" id="game-ui">
         
         <div class="scoreboard">
             <div class="team-score" id="t1-panel">
@@ -269,7 +367,6 @@
         </div>
 
         <div class="poker-table">
-            
             <div class="player-seat seat-top" id="seat-2">
                 <div class="player-label">Parceiro</div>
                 <div class="hand-slots" id="hand-2"></div>
@@ -301,14 +398,15 @@
                 <div class="played-card-slot slot-left" id="play-slot-3"></div>
                 <div class="played-card-slot slot-bottom" id="play-slot-0"></div>
             </div>
-
         </div>
 
         <div class="action-bar">
+            <button class="btn btn-menu-back" onclick="backToMenu()">Sair</button>
             <button class="btn btn-truco" id="btn-truco" onclick="playerRaisesAposta()">PEDIR TRUCO</button>
         </div>
     </div>
 
+    <!-- Modal de Aposta -->
     <div class="modal-overlay" id="aposta-modal">
         <div class="modal-box">
             <div class="modal-title" id="m-title">DESAFIO!</div>
@@ -322,6 +420,48 @@
     </div>
 
     <script>
+        // --- SISTEMA DE MENU E TEMAS ---
+        function applyTheme(theme) {
+            document.body.className = ''; // Reseta classes
+            if (theme === 'blue') document.body.classList.add('theme-blue');
+            if (theme === 'red') document.body.classList.add('theme-red');
+        }
+
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('truco-theme') || 'green';
+            document.getElementById('theme-select').value = savedTheme;
+            applyTheme(savedTheme);
+        }
+
+        function openSettings() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('settings-menu').classList.remove('hidden');
+        }
+
+        function saveSettings() {
+            const selectedTheme = document.getElementById('theme-select').value;
+            localStorage.setItem('truco-theme', selectedTheme);
+            applyTheme(selectedTheme);
+            
+            document.getElementById('settings-menu').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+        }
+
+        function startGame() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('game-ui').classList.remove('hidden');
+            initMatch();
+        }
+
+        function backToMenu() {
+            if(confirm("Tem certeza que deseja sair para o menu? O progresso do jogo será perdido.")) {
+                document.getElementById('game-ui').classList.add('hidden');
+                document.getElementById('main-menu').classList.remove('hidden');
+            }
+        }
+
+
+        // --- LÓGICA DO JOGO ---
         // Força das Cartas sem Desenho
         const CARD_POWERS = {
             '4 PAUS': 100,
@@ -337,12 +477,11 @@
             'Q': 10
         };
 
-        // Estado do Jogo
         let state = {
-            scoreTeam1: 0, // Você + Parceiro
-            scoreTeam2: 0, // Inimigos
-            handValue: 1,  // Multiplicador ativo (1, 3, 6, 9, 12)
-            lastToRaiseTeam: null, // Evita que o mesmo time aumente duas vezes seguidas
+            scoreTeam1: 0,
+            scoreTeam2: 0,
+            handValue: 1, 
+            lastToRaiseTeam: null,
             currentVaza: 0,
             hands: [[], [], [], []],
             playedThisVaza: [],
@@ -362,28 +501,21 @@
             startHand();
         }
 
-        // Monta o deck estritamente com os textos e regras solicitadas (Sem Desenhos)
         function buildDeck() {
             let deck = [];
-            
-            // Cartas Normais
             const ranks = ['Q', 'J', 'K', 'A', '2', '3'];
             ranks.forEach(r => {
-                // Adiciona variações genéricas que não colidam com as manilhas exclusivas
                 if (r !== 'A') deck.push({ text: r, color: 'c-black' }, { text: r, color: 'c-red' });
                 if (r === 'A') deck.push({ text: 'A', color: 'c-black' }, { text: 'A', color: 'c-red' });
-                // Enche o deck para ter cartas suficientes para os 4 jogadores descartarem nas 3 rodadas
                 deck.push({ text: r, color: 'c-black' });
                 deck.push({ text: r, color: 'c-red' });
             });
 
-            // Manilhas Absolutas Texto Puro
             deck.push({ text: '4 PAUS', color: 'c-black' });
             deck.push({ text: '7 CORACAO', color: 'c-red' });
             deck.push({ text: 'A ESPADA', color: 'c-black' });
             deck.push({ text: '7 OURO', color: 'c-red' });
 
-            // Coringas
             deck.push({ text: 'JOKER', color: 'c-joker' });
             deck.push({ text: 'JOKER', color: 'c-joker' });
 
@@ -398,7 +530,6 @@
             state.lastToRaiseTeam = null;
             state.waitingDecision = false;
 
-            // Mão de 11 (Quem tem 11 pontos)
             state.isMaoDe11 = (state.scoreTeam1 === 11 || state.scoreTeam2 === 11);
             state.isMaoDeFerro = (state.scoreTeam1 === 11 && state.scoreTeam2 === 11);
 
@@ -473,7 +604,6 @@
                 document.getElementById(`seat-${i}`).className = `player-seat seat-${getSeatName(i)} ${state.turn === i ? 'active-player-glow' : ''}`;
             }
 
-            // Mão do Jogador Humano
             const pHand = document.getElementById('hand-0');
             pHand.innerHTML = "";
             state.hands[0].forEach((card, idx) => {
@@ -489,7 +619,6 @@
                 pHand.appendChild(cDiv);
             });
 
-            // Ocultar visual das cartas dos Bots
             for (let b = 1; b <= 3; b++) {
                 const bHand = document.getElementById(`hand-${b}`);
                 bHand.innerHTML = "";
@@ -501,7 +630,6 @@
                 });
             }
 
-            // Atualiza Botão Dinâmico de Aposta do Jogador
             const btnT = document.getElementById('btn-truco');
             let nextVal = getNextRaiseValue(state.handValue);
             
@@ -544,7 +672,6 @@
             const currentBot = state.turn;
             const botTeam = (currentBot % 2 === 0 ? 1 : 2);
 
-            // Blefe / Pedido de Aposta randômico pelos Bots
             if (state.handValue < 12 && state.lastToRaiseTeam !== botTeam && !state.isMaoDe11 && !state.isMaoDeFerro) {
                 let hasGoodCard = state.hands[currentBot].some(c => CARD_POWERS[c.text] >= 97);
                 if (hasGoodCard && Math.random() < 0.15) {
@@ -553,7 +680,6 @@
                 }
             }
 
-            // Descarte simples da IA
             let cardIdx = 0;
             if (state.playedThisVaza.length > 0) {
                 let currentMax = Math.max(...state.playedThisVaza.map(p => CARD_POWERS[p.card.text]));
@@ -652,19 +778,17 @@
                 alert(`Opa! Adversários marcaram +${pointsGained} ponto(s).`);
             }
 
-            // O JOGO SÓ ACABA QUEM FIZER 12 PONTOS EXATOS OU MAIS
             if (state.scoreTeam1 >= 12) {
                 alert("FIM DE JOGO! SEU TIME FEZ 12 PONTOS E GANHOU A PARTIDA! 🏆");
-                initMatch();
+                backToMenu(); // Retorna ao menu após ganhar
             } else if (state.scoreTeam2 >= 12) {
                 alert("FIM DE JOGO! ADVERSÁRIOS CHEGARAM A 12 PONTOS. VITORIA DELES! 🤖");
-                initMatch();
+                backToMenu(); // Retorna ao menu após perder
             } else {
                 startHand();
             }
         }
 
-        // Sistema de Aumento e Escalada de Truco (3, 6, 9, 12)
         function playerRaisesAposta() {
             if (state.turn !== 0 || state.waitingDecision) return;
             state.waitingDecision = true;
@@ -678,21 +802,17 @@
                 let bot3P = state.hands[3].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
                 let maxBotPower = Math.max(bot1P, bot3P);
 
-                // IA decide aceitar, correr ou aumentar de volta
                 if (maxBotPower > 45 && targetValue < 12 && Math.random() < 0.25) {
-                    // Bot aceita e aumenta de volta
                     let counterValue = getNextRaiseValue(targetValue);
                     state.handValue = targetValue;
                     state.waitingDecision = false;
                     botRaisesAposta(1, counterValue);
                 } else if (maxBotPower > 28 || Math.random() < 0.5) {
-                    // Bot apenas aceita
                     state.handValue = targetValue;
                     alert(`Bots aceitaram! A rodada agora vale ${state.handValue} pontos.`);
                     state.waitingDecision = false;
                     renderUI();
                 } else {
-                    // Bot corre
                     alert(`Os Bots correram! Seu time ganha os pontos anteriores (${state.handValue}).`);
                     state.waitingDecision = false;
                     resolveHandWinner(1);
@@ -711,7 +831,6 @@
             document.getElementById('m-title').innerText = `AUMENTARAM PARA ${targetValue}!`;
             document.getElementById('m-desc').innerText = `O que o seu time deseja fazer?`;
 
-            // Botão Aceitar
             document.getElementById('btn-m-accept').onclick = () => {
                 state.handValue = targetValue;
                 modal.style.display = 'none';
@@ -720,14 +839,12 @@
                 if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
             };
 
-            // Botão Correr
             document.getElementById('btn-m-fold').onclick = () => {
                 modal.style.display = 'none';
                 state.waitingDecision = false;
-                resolveHandWinner(2); // Inimigos levam o valor antigo
+                resolveHandWinner(2);
             };
 
-            // Botão Aumentar Mais (Se não estiver no limite 12)
             const btnRaise = document.getElementById('btn-m-raise');
             let nextLevel = getNextRaiseValue(targetValue);
             if (targetValue >= 12) {
@@ -747,7 +864,6 @@
             modal.style.display = 'flex';
         }
 
-        // Lógica de Mão de 11 Pontos Fixa
         function handleMaoDe11Logic() {
             state.waitingDecision = true;
             if (state.scoreTeam1 === 11) {
@@ -771,7 +887,6 @@
                 };
                 modal.style.display = 'flex';
             } else {
-                // Bots decidem se jogam a mão de 11 deles
                 setTimeout(() => {
                     let b1 = state.hands[1].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
                     let b3 = state.hands[3].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
@@ -790,7 +905,11 @@
             }
         }
 
-        window.onload = initMatch;
+        // --- INICIALIZAÇÃO ---
+        window.onload = () => {
+            loadSavedTheme(); 
+            // O Menu Principal já é exibido por padrão porque o contêiner do jogo está marcado como 'hidden'
+        };
     </script>
 </body>
 </html>

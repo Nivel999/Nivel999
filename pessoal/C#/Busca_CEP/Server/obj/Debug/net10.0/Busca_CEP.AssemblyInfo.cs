@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Busca_CEP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37baa87948e842834f82bd24bbe7143008904658")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+65906c87c12bb6b6fa7271cc9d3b106bf215e581")]
 [assembly: System.Reflection.AssemblyProductAttribute("Busca_CEP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Busca_CEP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
