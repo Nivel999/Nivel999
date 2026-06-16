@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truco 12 Pontos - Customizado</title>
+    <style>
+        :root {
+            --table-green: #1b4d3e;
+            --table-dark: #0f3026;
+            --gold-accent: #ffb74d;
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --red-text: #c0392b;
+            --black-text: #2c3e50;
+            --joker-text: #8e44ad;
+        }
+        body.theme-blue {
+            --table-green: #1e3799;
+            --table-dark: #0c2461;
+        }
+        body.theme-red {
+            --table-green: #b71540;
+            --table-dark: #600b21;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            user-select: none;
+        }
+        body {
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+        .menu-container {
+            background: #222;
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid var(--gold-accent);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .menu-container h1, .menu-container h2 {
+            color: var(--gold-accent);
+            margin-bottom: 10px;
+        }
+        .menu-btn {
+            background: var(--table-green);
+            color: white;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .menu-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--gold-accent);
+        }
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+        }
+        .settings-group label {
+            color: #ccc;
+        }
+        .settings-group select {
+            padding: 10px;
+            font-size: 1rem;
+            background: #333;
+            color: white;
+            border: 1px solid var(--gold-accent);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 95vh;
+            background: radial-gradient(circle, var(--table-green) 40%, var(--table-dark) 100%);
+            border: 10px solid #2c1a04;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            padding: 15px;
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .team-score {
+            text-align: center;
+            min-width: 140px;
+            padding: 5px;
+        }
+        .team-score.active-turn {
+            border-bottom: 3px solid var(--gold-accent);
+        }
+        .team-score .label { font-size: 0.8rem; color: #ccc; text-transform: uppercase; }
+        .team-score .points { font-size: 2.2rem; color: var(--gold-accent); }
+        .game-status-center { text-align: center; }
+        #match-value { font-size: 1.4rem; color: #fff; text-transform: uppercase; }
+        #info-log { font-size: 0.9rem; color: #ffeb3b; margin-top: 4px; }
+        .poker-table {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .player-seat {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+        .seat-top { top: 0; left: 50%; transform: translateX(-50%); }
+        .seat-left { left: 0; top: 50%; transform: translateY(-50%); }
+        .seat-right { right: 0; top: 50%; transform: translateY(-50%); }
+        .seat-bottom { bottom: 0; left: 50%; transform: translateX(-50%); }
+        .player-label {
+            background: rgba(0,0,0,0.8);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .active-player-glow .player-label { background: var(--gold-accent); color: black; }
+        .hand-slots { display: flex; gap: 6px; }
+        .center-arena {
+            width: 240px;
+            height: 240px;
+            position: relative;
+            background: rgba(0,0,0,0.2);
+            border: 2px dashed rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .played-card-slot {
+            position: absolute;
+            width: 80px;
+            height: 110px;
+            border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slot-top { top: 10px; left: 50%; transform: translateX(-50%); }
+        .slot-bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .slot-left { left: 10px; top: 50%; transform: translateY(-50%); }
+        .slot-right { right: 10px; top: 50%; transform: translateY(-50%); }
+        .card {
+            width: 80px;
+            height: 110px;
+            background: var(--card-bg);
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+            border: 2px solid #ccc;
+        }
+        .seat-bottom .card:hover { transform: translateY(-10px); }
+        .card.c-black { color: var(--black-text); }
+        .card.c-red { color: var(--red-text); }
+        .card.c-joker { color: var(--joker-text); border: 2px solid var(--joker-text); }
+        .card.card-back {
+            background: #2c3e50;
+            color: #2c3e50;
+            border: 2px solid #fff;
+            cursor: default;
+        }
+        .vaza-tracker { display: flex; justify-content: center; gap: 10px; margin-bottom: 4px; }
+        .vaza-dot {
+            width: 20px; height: 20px; background: #444; border-radius: 3px;
+            display: flex; justify-content: center; align-items: center; font-size: 0.7rem;
+        }
+        .vaza-dot.t1 { background: #27ae60; }
+        .vaza-dot.t2 { background: #c0392b; }
+        .vaza-dot.tie { background: #f39c12; }
+        .action-bar { display: flex; justify-content: center; gap: 15px; padding: 5px; }
+        .btn {
+            padding: 10px 25px; font-size: 1rem; border: none; border-radius: 4px;
+            cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-truco { background: #e67e22; color: white; }
+        .btn-menu-back { background: #555; color: white; }
+        .btn:disabled { background: #555 !important; color: #888 !important; cursor: not-allowed; }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
+            display: none; justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal-box {
+            background: #222; padding: 25px; border-radius: 10px; border: 2px solid var(--gold-accent);
+            text-align: center; width: 90%; max-width: 400px;
+        }
+        .modal-title { font-size: 1.5rem; color: var(--gold-accent); margin-bottom: 10px; }
+        .modal-desc { font-size: 1rem; margin-bottom: 20px; color: #fff; }
+        .modal-btns { display: flex; flex-direction: column; gap: 10px; }
+        .btn-accept { background: #27ae60; color: white; }
+        .btn-raise { background: #9b59b6; color: white; }
+        .btn-fold { background: #c0392b; color: white; }
+    </style>
+</head>
+<body>
+    <div id="main-menu" class="menu-container">
+        <h1>TRUCO 12 PONTOS</h1>
+        <button class="menu-btn" onclick="startGame()">Jogar Nova Partida</button>
+        <button class="menu-btn" onclick="openSettings()">Configurações</button>
+    </div>
+
+    <div id="settings-menu" class="menu-container hidden">
+        <h2>CONFIGURAÇÕES</h2>
+        <div class="settings-group">
+            <label for="theme-select">Cor da Mesa (Tema):</label>
+            <select id="theme-select">
+                <option value="green">Verde Clássico</option>
+                <option value="blue">Azul Casino</option>
+                <option value="red">Vermelho Sangue</option>
+            </select>
+        </div>
+        <button class="menu-btn" onclick="saveSettings()">Salvar e Voltar</button>
+    </div>
+
+    <div class="game-container hidden" id="game-ui">
+        <div class="scoreboard">
+            <div class="team-score" id="t1-panel">
+                <div class="label">Seu Time</div>
+                <div class="points" id="score-t1">0</div>
+            </div>
+            <div class="game-status-center">
+                <div id="match-value">VALENDO 1 PONTO</div>
+                <div id="info-log">Iniciando jogo...</div>
+            </div>
+            <div class="team-score" id="t2-panel">
+                <div class="label">Adversários</div>
+                <div class="points" id="score-t2">0</div>
+            </div>
+        </div>
+
+        <div class="poker-table">
+            <div class="player-seat seat-top" id="seat-2">
+                <div class="player-label">Parceiro</div>
+                <div class="hand-slots" id="hand-2"></div>
+            </div>
+            <div class="player-seat seat-right" id="seat-1">
+                <div class="player-label">Oponente 1</div>
+                <div class="hand-slots" id="hand-1"></div>
+            </div>
+            <div class="player-seat seat-left" id="seat-3">
+                <div class="player-label">Oponente 2</div>
+                <div class="hand-slots" id="hand-3"></div>
+            </div>
+            <div class="player-seat seat-bottom" id="seat-0">
+                <div class="vaza-tracker">
+                    <div class="vaza-dot" id="vaza-0">-</div>
+                    <div class="vaza-dot" id="vaza-1">-</div>
+                    <div class="vaza-dot" id="vaza-2">-</div>
+                </div>
+                <div class="hand-slots" id="hand-0"></div>
+                <div class="player-label">Você</div>
+            </div>
+            <div class="center-arena">
+                <div class="played-card-slot slot-top" id="play-slot-2"></div>
+                <div class="played-card-slot slot-right" id="play-slot-1"></div>
+                <div class="played-card-slot slot-left" id="play-slot-3"></div>
+                <div class="played-card-slot slot-bottom" id="play-slot-0"></div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-menu-back" onclick="backToMenu()">Sair</button>
+            <button class="btn btn-truco" id="btn-truco" onclick="playerRaisesAposta()">PEDIR TRUCO</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="aposta-modal">
+        <div class="modal-box">
+            <div class="modal-title" id="m-title">DESAFIO!</div>
+            <div class="modal-desc" id="m-desc">O time adversário aumentou o valor da rodada.</div>
+            <div class="modal-btns">
+                <button class="btn btn-accept" id="btn-m-accept">ACEITAR</button>
+                <button class="btn btn-raise" id="btn-m-raise">AUMENTAR</button>
+                <button class="btn btn-fold" id="btn-m-fold">CORRER</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function applyTheme(theme) {
+            document.body.className = '';
+            if (theme === 'blue') document.body.classList.add('theme-blue');
+            if (theme === 'red') document.body.classList.add('theme-red');
+        }
+
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('truco-theme') || 'green';
+            document.getElementById('theme-select').value = savedTheme;
+            applyTheme(savedTheme);
+        }
+
+        function openSettings() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('settings-menu').classList.remove('hidden');
+        }
+
+        function saveSettings() {
+            const selectedTheme = document.getElementById('theme-select').value;
+            localStorage.setItem('truco-theme', selectedTheme);
+            applyTheme(selectedTheme);
+            document.getElementById('settings-menu').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+        }
+
+        function startGame() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('game-ui').classList.remove('hidden');
+            initMatch();
+        }
+
+        function backToMenu() {
+            if(confirm("Tem certeza que deseja sair para o menu? O progresso do jogo será perdido.")) {
+                document.getElementById('game-ui').classList.add('hidden');
+                document.getElementById('main-menu').classList.remove('hidden');
+            }
+        }
+
+        const CARD_POWERS = {
+            '4 PAUS': 100, '7 CORACAO': 99, 'A ESPADA': 98, '7 OURO': 97,
+            'JOKER': 50, '3': 15, '2': 14, 'A': 13, 'K': 12, 'J': 11, 'Q': 10
+        };
+
+        let state = {
+            scoreTeam1: 0, scoreTeam2: 0, handValue: 1, lastToRaiseTeam: null,
+            currentVaza: 0, hands: [[], [], [], []], playedThisVaza: [],
+            vazaWinners: [], turn: 0, dealer: 3, vazaOpener: 0,
+            waitingDecision: false, isMaoDe11: false, isMaoDeFerro: false
+        };
+
+        function initMatch() {
+            state.scoreTeam1 = 0;
+            state.scoreTeam2 = 0;
+            state.dealer = Math.floor(Math.random() * 4);
+            startHand();
+        }
+
+        function buildDeck() {
+            let deck = [];
+            const ranks = ['Q', 'J', 'K', 'A', '2', '3'];
+            ranks.forEach(r => {
+                if (r !== 'A') deck.push({ text: r, color: 'c-black' }, { text: r, color: 'c-red' });
+                if (r === 'A') deck.push({ text: 'A', color: 'c-black' }, { text: 'A', color: 'c-red' });
+                deck.push({ text: r, color: 'c-black' });
+                deck.push({ text: r, color: 'c-red' });
+            });
+            deck.push({ text: '4 PAUS', color: 'c-black' });
+            deck.push({ text: '7 CORACAO', color: 'c-red' });
+            deck.push({ text: 'A ESPADA', color: 'c-black' });
+            deck.push({ text: '7 OURO', color: 'c-red' });
+            deck.push({ text: 'JOKER', color: 'c-joker' });
+            deck.push({ text: 'JOKER', color: 'c-joker' });
+            return deck;
+        }
+
+        function startHand() {
+            state.currentVaza = 0;
+            state.playedThisVaza = [];
+            state.vazaWinners = [];
+            state.handValue = 1;
+            state.lastToRaiseTeam = null;
+            state.waitingDecision = false;
+            state.isMaoDe11 = (state.scoreTeam1 === 11 || state.scoreTeam2 === 11);
+            state.isMaoDeFerro = (state.scoreTeam1 === 11 && state.scoreTeam2 === 11);
+
+            if (state.isMaoDeFerro) {
+                state.handValue = 1;
+                updateLog("MÃO DE FERRO - No Escuro!");
+            } else if (state.isMaoDe11) {
+                state.handValue = 3;
+                updateLog("MÃO DE 11 Ativa.");
+            } else {
+                updateLog("Nova rodada iniciada. Jogue!");
+            }
+
+            state.dealer = (state.dealer + 1) % 4;
+            state.turn = (state.dealer + 1) % 4;
+            state.vazaOpener = state.turn;
+
+            let deck = buildDeck();
+            deck.sort(() => Math.random() - 0.5);
+
+            for (let i = 0; i < 4; i++) {
+                state.hands[i] = [deck.pop(), deck.pop(), deck.pop()];
+            }
+
+            resetVazaDots();
+            clearTableSlots();
+            renderUI();
+
+            if (state.isMaoDe11 && !state.isMaoDeFerro) {
+                handleMaoDe11Logic();
+            } else {
+                if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
+            }
+        }
+
+        function updateLog(msg) {
+            document.getElementById('info-log').innerText = msg;
+        }
+
+        function clearTableSlots() {
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`play-slot-${i}`).innerHTML = "";
+            }
+        }
+
+        function resetVazaDots() {
+            for (let i = 0; i < 3; i++) {
+                let dot = document.getElementById(`vaza-${i}`);
+                dot.className = "vaza-dot";
+                dot.innerText = "-";
+            }
+        }
+
+        function getNextRaiseValue(current) {
+            if (current === 1) return 3;
+            if (current === 3) return 6;
+            if (current === 6) return 9;
+            if (current === 9) return 12;
+            return 12;
+        }
+
+        function renderUI() {
+            document.getElementById('score-t1').innerText = state.scoreTeam1;
+            document.getElementById('score-t2').innerText = state.scoreTeam2;
+            document.getElementById('match-value').innerText = `VALENDO ${state.handValue} PONTO(S)`;
+
+            const isT1Turn = (state.turn === 0 || state.turn === 2);
+            document.getElementById('t1-panel').className = `team-score ${isT1Turn ? 'active-turn' : ''}`;
+            document.getElementById('t2-panel').className = `team-score ${!isT1Turn ? 'active-turn' : ''}`;
+
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`seat-${i}`).className = `player-seat seat-${getSeatName(i)} ${state.turn === i ? 'active-player-glow' : ''}`;
+            }
+
+            const pHand = document.getElementById('hand-0');
+            pHand.innerHTML = "";
+            state.hands[0].forEach((card, idx) => {
+                const cDiv = document.createElement('div');
+                if (state.isMaoDeFerro) {
+                    cDiv.className = "card card-back";
+                    cDiv.innerText = "?";
+                } else {
+                    cDiv.className = `card ${card.color}`;
+                    cDiv.innerText = card.text;
+                    cDiv.onclick = () => playerPlayCard(idx);
+                }
+                pHand.appendChild(cDiv);
+            });
+
+            for (let b = 1; b <= 3; b++) {
+                const bHand = document.getElementById(`hand-${b}`);
+                bHand.innerHTML = "";
+                state.hands[b].forEach(() => {
+                    const cDiv = document.createElement('div');
+                    cDiv.className = "card card-back";
+                    cDiv.innerText = "?";
+                    bHand.appendChild(cDiv);
+                });
+            }
+
+            const btnT = document.getElementById('btn-truco');
+            let nextVal = getNextRaiseValue(state.handValue);
+            
+            if (nextVal === 3) btnT.innerText = "PEDIR TRUCO";
+            else if (nextVal === 6) btnT.innerText = "PEDIR 6";
+            else if (nextVal === 9) btnT.innerText = "PEDIR 9";
+            else if (nextVal === 12) btnT.innerText = "PEDIR 12";
+
+            if (state.handValue === 12 || state.lastToRaiseTeam === 1 || state.waitingDecision || state.isMaoDe11 || state.isMaoDeFerro) {
+                btnT.disabled = true;
+            } else {
+                btnT.disabled = false;
+            }
+        }
+
+        function getSeatName(id) {
+            return id === 0 ? 'bottom' : id === 1 ? 'right' : id === 2 ? 'top' : 'left';
+        }
+
+        function playerPlayCard(idx) {
+            if (state.turn !== 0 || state.waitingDecision) return;
+            const card = state.hands[0].splice(idx, 1)[0];
+            processCardPlacement(0, card);
+        }
+
+        function processCardPlacement(playerID, card) {
+            state.playedThisVaza.push({ playerId: playerID, card: card, team: (playerID % 2 === 0 ? 1 : 2) });
+            const slot = document.getElementById(`play-slot-${playerID}`);
+            slot.innerHTML = `<div class="card ${card.color}">${card.text}</div>`;
+            state.turn = (state.turn + 1) % 4;
+            renderUI();
+            setTimeout(evaluateVazaProgress, 800);
+        }
+
+        async function executeBotTurn() {
+            if (state.turn === 0 || state.waitingDecision) return;
+            const currentBot = state.turn;
+            const botTeam = (currentBot % 2 === 0 ? 1 : 2);
+
+            if (state.handValue < 12 && state.lastToRaiseTeam !== botTeam && !state.isMaoDe11 && !state.isMaoDeFerro) {
+                let hasGoodCard = state.hands[currentBot].some(c => CARD_POWERS[c.text] >= 97);
+                if (hasGoodCard && Math.random() < 0.15) {
+                    botRaisesAposta(currentBot);
+                    return;
+                }
+            }
+
+            let cardIdx = 0;
+            if (state.playedThisVaza.length > 0) {
+                let currentMax = Math.max(...state.playedThisVaza.map(p => CARD_POWERS[p.card.text]));
+                let choices = state.hands[currentBot]
+                    .map((c, i) => ({ c, i, p: CARD_POWERS[c.text] }))
+                    .filter(x => x.p > currentMax)
+                    .sort((a,b) => a.p - b.p);
+
+                if (choices.length > 0) cardIdx = choices[0].i;
+            }
+
+            const card = state.hands[currentBot].splice(cardIdx, 1)[0];
+            processCardPlacement(currentBot, card);
+        }
+
+        function evaluateVazaProgress() {
+            if (state.playedThisVaza.length < 4) {
+                if (state.turn !== 0) executeBotTurn();
+                return;
+            }
+
+            let bestPlay = state.playedThisVaza[0];
+            let isTie = false;
+
+            for (let i = 1; i < state.playedThisVaza.length; i++) {
+                let currentPower = CARD_POWERS[state.playedThisVaza[i].card.text];
+                let bestPower = CARD_POWERS[bestPlay.card.text];
+
+                if (currentPower > bestPower) {
+                    bestPlay = state.playedThisVaza[i];
+                    isTie = false;
+                } else if (currentPower === bestPower) {
+                    if (state.playedThisVaza[i].team !== bestPlay.team) {
+                        isTie = true;
+                    }
+                }
+            }
+
+            let winnerTeam = 'tie';
+            const dot = document.getElementById(`vaza-${state.currentVaza}`);
+
+            if (isTie) {
+                dot.className = "vaza-dot tie";
+                dot.innerText = "E";
+                updateLog("Empatou a rodada!");
+            } else {
+                winnerTeam = bestPlay.team;
+                dot.className = `vaza-dot t${winnerTeam}`;
+                dot.innerText = winnerTeam === 1 ? "V" : "D";
+                updateLog(`Time ${winnerTeam === 1 ? 'Seu':'Adversário'} ganhou a rodada.`);
+                state.turn = bestPlay.playerId;
+                state.vazaOpener = state.turn;
+            }
+
+            state.vazaWinners.push(winnerTeam);
+            state.playedThisVaza = [];
+            state.currentVaza++;
+
+            let handWinner = checkHandWinner();
+            if (handWinner) {
+                setTimeout(() => resolveHandWinner(handWinner), 1000);
+            } else {
+                setTimeout(() => {
+                    clearTableSlots();
+                    renderUI();
+                    if (state.turn !== 0) executeBotTurn();
+                }, 1000);
+            }
+        }
+
+        function checkHandWinner() {
+            const w = state.vazaWinners;
+            const t1 = w.filter(x => x === 1).length;
+            const t2 = w.filter(x => x === 2).length;
+
+            if (t1 === 2) return 1;
+            if (t2 === 2) return 2;
+            if (w[0] === 'tie' && w[1] !== 'tie') return w[1];
+            if (w[0] !== 'tie' && w[1] === 'tie') return w[0];
+            if (w[2] === 'tie' && w[0] !== 'tie') return w[0];
+            if (w.length === 3 && w.every(x => x === 'tie')) {
+                return (state.dealer % 2 === 0) ? 2 : 1; 
+            }
+            return null;
+        }
+
+        function resolveHandWinner(winnerTeam) {
+            const pointsGained = state.handValue;
+            if (winnerTeam === 1) {
+                state.scoreTeam1 += pointsGained;
+                alert(`Boa! Seu time marcou +${pointsGained} ponto(s).`);
+            } else {
+                state.scoreTeam2 += pointsGained;
+                alert(`Opa! Adversários marcaram +${pointsGained} ponto(s).`);
+            }
+
+            if (state.scoreTeam1 >= 12) {
+                alert("FIM DE JOGO! SEU TIME FEZ 12 PONTOS E GANHOU A PARTIDA! 🏆");
+                backToMenu();
+            } else if (state.scoreTeam2 >= 12) {
+                alert("FIM DE JOGO! ADVERSÁRIOS CHEGARAM A 12 PONTOS. VITORIA DELES! 🤖");
+                backToMenu();
+            } else {
+                startHand();
+            }
+        }
+
+        function playerRaisesAposta() {
+            if (state.turn !== 0 || state.waitingDecision) return;
+            state.waitingDecision = true;
+            state.lastToRaiseTeam = 1;
+            let targetValue = getNextRaiseValue(state.handValue);
+            
+            updateLog(`Você pediu para aumentar para ${targetValue}!`);
+
+            setTimeout(() => {
+                let bot1P = state.hands[1].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
+                let bot3P = state.hands[3].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
+                let maxBotPower = Math.max(bot1P, bot3P);
+
+                if (maxBotPower > 45 && targetValue < 12 && Math.random() < 0.25) {
+                    let counterValue = getNextRaiseValue(targetValue);
+                    state.handValue = targetValue;
+                    state.waitingDecision = false;
+                    botRaisesAposta(1, counterValue);
+                } else if (maxBotPower > 28 || Math.random() < 0.5) {
+                    state.handValue = targetValue;
+                    alert(`Bots aceitaram! A rodada agora vale ${state.handValue} pontos.`);
+                    state.waitingDecision = false;
+                    renderUI();
+                } else {
+                    alert(`Os Bots correram! Seu time ganha os pontos anteriores (${state.handValue}).`);
+                    state.waitingDecision = false;
+                    resolveHandWinner(1);
+                }
+            }, 1200);
+        }
+
+        function botRaisesAposta(botId, forcedValue = null) {
+            state.waitingDecision = true;
+            state.lastToRaiseTeam = 2;
+            let targetValue = forcedValue ? forcedValue : getNextRaiseValue(state.handValue);
+
+            updateLog(`Adversários pediram para aumentar para ${targetValue}!`);
+
+            const modal = document.getElementById('aposta-modal');
+            document.getElementById('m-title').innerText = `AUMENTARAM PARA ${targetValue}!`;
+            document.getElementById('m-desc').innerText = `O que o seu time deseja fazer?`;
+
+            document.getElementById('btn-m-accept').onclick = () => {
+                state.handValue = targetValue;
+                modal.style.display = 'none';
+                state.waitingDecision = false;
+                renderUI();
+                if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
+            };
+
+            document.getElementById('btn-m-fold').onclick = () => {
+                modal.style.display = 'none';
+                state.waitingDecision = false;
+                resolveHandWinner(2);
+            };
+
+            const btnRaise = document.getElementById('btn-m-raise');
+            let nextLevel = getNextRaiseValue(targetValue);
+            if (targetValue >= 12) {
+                btnRaise.style.display = 'none';
+            } else {
+                btnRaise.style.display = 'block';
+                btnRaise.innerText = `PEDIR ${nextLevel}`;
+                btnRaise.onclick = () => {
+                    modal.style.display = 'none';
+                    state.handValue = targetValue;
+                    state.lastToRaiseTeam = 1;
+                    state.waitingDecision = false;
+                    playerRaisesAposta();
+                };
+            }
+            modal.style.display = 'flex';
+        }
+
+        function handleMaoDe11Logic() {
+            state.waitingDecision = true;
+            if (state.scoreTeam1 === 11) {
+                const modal = document.getElementById('aposta-modal');
+                document.getElementById('m-title').innerText = "MÃO DE 11 DO SEU TIME";
+                document.getElementById('m-desc').innerText = "Vocês têm 11 pontos. Desejam jogar valendo 3 pontos ou correr (concedendo 1 ponto aos bots)?";
+                document.getElementById('btn-m-raise').style.display = 'none';
+                
+                document.getElementById('btn-m-accept').onclick = () => {
+                    state.handValue = 3;
+                    modal.style.display = 'none';
+                    state.waitingDecision = false;
+                    renderUI();
+                    if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
+                };
+
+                document.getElementById('btn-m-fold').onclick = () => {
+                    modal.style.display = 'none';
+                    state.waitingDecision = false;
+                    resolveHandWinner(2);
+                };
+                modal.style.display = 'flex';
+            } else if (state.scoreTeam2 === 11) {
+                if (Math.random() < 0.5) {
+                    alert("Adversários correram na Mão de 11. Seu time ganha 1 ponto.");
+                    state.waitingDecision = false;
+                    resolveHandWinner(1);
+                } else {
+                    alert("Adversários aceitaram jogar a Mão de 11!");
+                    state.handValue = 3;
+                    state.waitingDecision = false;
+                    renderUI();
+                    if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
