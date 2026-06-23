@@ -3,411 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truco 12 Pontos - Customizado</title>
-    <style>
-        :root {
-            --table-green: #1b4d3e;
-            --table-dark: #0f3026;
-            --gold-accent: #ffb74d;
-            --card-bg: #ffffff;
-            --text-dark: #2c3e50;
-            --red-text: #c0392b;
-            --black-text: #2c3e50;
-            --joker-text: #8e44ad;
-        }
-
-        /* Temas de cores (Aplicados no body) */
-        body.theme-blue {
-            --table-green: #1e3799;
-            --table-dark: #0c2461;
-        }
-        
-        body.theme-red {
-            --table-green: #b71540;
-            --table-dark: #600b21;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            user-select: none;
-        }
-
-        body {
-            background-color: #111;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: white;
-            overflow: hidden;
-            transition: background 0.3s;
-        }
-
-        /* --------- Menus --------- */
-        .menu-container {
-            background: #222;
-            padding: 40px;
-            border-radius: 15px;
-            border: 2px solid var(--gold-accent);
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .menu-container h1, .menu-container h2 {
-            color: var(--gold-accent);
-            margin-bottom: 10px;
-        }
-
-        .menu-btn {
-            background: var(--table-green);
-            color: white;
-            padding: 15px;
-            font-size: 1.2rem;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .menu-btn:hover {
-            transform: scale(1.05);
-            border-color: var(--gold-accent);
-        }
-
-        .settings-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            text-align: left;
-        }
-
-        .settings-group label {
-            color: #ccc;
-        }
-
-        .settings-group select {
-            padding: 10px;
-            font-size: 1rem;
-            background: #333;
-            color: white;
-            border: 1px solid var(--gold-accent);
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        /* Classe utilitária para esconder elementos */
-        .hidden {
-            display: none !important;
-        }
-
-        /* --------- Jogo --------- */
-        .game-container {
-            width: 100%;
-            max-width: 1000px;
-            height: 95vh;
-            background: radial-gradient(circle, var(--table-green) 40%, var(--table-dark) 100%);
-            border: 10px solid #2c1a04;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            padding: 15px;
-        }
-
-        /* Placar */
-        .scoreboard {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-
-        .team-score {
-            text-align: center;
-            min-width: 140px;
-            padding: 5px;
-        }
-        .team-score.active-turn {
-            border-bottom: 3px solid var(--gold-accent);
-        }
-        .team-score .label { font-size: 0.8rem; color: #ccc; text-transform: uppercase; }
-        .team-score .points { font-size: 2.2rem; color: var(--gold-accent); }
-
-        .game-status-center {
-            text-align: center;
-        }
-        #match-value {
-            font-size: 1.4rem;
-            color: #fff;
-            text-transform: uppercase;
-        }
-        #info-log {
-            font-size: 0.9rem;
-            color: #ffeb3b;
-            margin-top: 4px;
-        }
-
-        /* Layout da Mesa */
-        .poker-table {
-            flex-grow: 1;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .player-seat {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            z-index: 10;
-        }
-        .seat-top { top: 0; left: 50%; transform: translateX(-50%); }
-        .seat-left { left: 0; top: 50%; transform: translateY(-50%); }
-        .seat-right { right: 0; top: 50%; transform: translateY(-50%); }
-        .seat-bottom { bottom: 0; left: 50%; transform: translateX(-50%); }
-
-        .player-label {
-            background: rgba(0,0,0,0.8);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        .active-player-glow .player-label {
-            background: var(--gold-accent);
-            color: black;
-        }
-
-        .hand-slots {
-            display: flex;
-            gap: 6px;
-        }
-
-        /* Centro de Descarte */
-        .center-arena {
-            width: 240px;
-            height: 240px;
-            position: relative;
-            background: rgba(0,0,0,0.2);
-            border: 2px dashed rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-
-        .played-card-slot {
-            position: absolute;
-            width: 80px;
-            height: 110px;
-            border: 1px dashed rgba(255,255,255,0.2);
-            border-radius: 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .slot-top { top: 10px; left: 50%; transform: translateX(-50%); }
-        .slot-bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
-        .slot-left { left: 10px; top: 50%; transform: translateY(-50%); }
-        .slot-right { right: 10px; top: 50%; transform: translateY(-50%); }
-
-        /* Cartas Sem Desenho (Apenas Texto) */
-        .card {
-            width: 80px;
-            height: 110px;
-            background: var(--card-bg);
-            border-radius: 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 5px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 0.95rem;
-            word-wrap: break-word;
-            border: 2px solid #ccc;
-        }
-        .seat-bottom .card:hover {
-            transform: translateY(-10px);
-        }
-        
-        /* Cores de texto baseadas na folha enviada */
-        .card.c-black { color: var(--black-text); }
-        .card.c-red { color: var(--red-text); }
-        .card.c-joker { color: var(--joker-text); border: 2px solid var(--joker-text); }
-        
-        .card.card-back {
-            background: #2c3e50;
-            color: #2c3e50;
-            border: 2px solid #fff;
-            cursor: default;
-        }
-
-        /* Marcadores de Rodadas Intermediárias (Vazas) */
-        .vaza-tracker {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 4px;
-        }
-        .vaza-dot {
-            width: 20px;
-            height: 20px;
-            background: #444;
-            border-radius: 3px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.7rem;
-        }
-        .vaza-dot.t1 { background: #27ae60; }
-        .vaza-dot.t2 { background: #c0392b; }
-        .vaza-dot.tie { background: #f39c12; }
-
-        /* Painel de Controle Inferior */
-        .action-bar {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            padding: 5px;
-        }
-        .btn {
-            padding: 10px 25px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .btn-truco { background: #e67e22; color: white; }
-        .btn-menu-back { background: #555; color: white; }
-        .btn:disabled { background: #555 !important; color: #888 !important; cursor: not-allowed; }
-
-        /* Modais de Truco/Aposta */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-        .modal-box {
-            background: #222;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px solid var(--gold-accent);
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-        }
-        .modal-title { font-size: 1.5rem; color: var(--gold-accent); margin-bottom: 10px; }
-        .modal-desc { font-size: 1rem; margin-bottom: 20px; color: #fff; }
-        .modal-btns { display: flex; flex-direction: column; gap: 10px; }
-        .btn-accept { background: #27ae60; color: white; }
-        .btn-raise { background: #9b59b6; color: white; }
-        .btn-fold { background: #c0392b; color: white; }
-    </style>
+    <title>Truco - 12 Pontos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Menu Principal -->
-    <div id="main-menu" class="menu-container">
-        <h1>TRUCO 12 PONTOS</h1>
-        <button class="menu-btn" onclick="startGame()">Jogar Nova Partida</button>
-        <button class="menu-btn" onclick="openSettings()">Configurações</button>
+    <!--
+    ============================================================
+    TRUCO 12 PONTOS - Jogo de Cartas em HTML/CSS/JS
+    ============================================================
+    Projeto acadêmico da disciplina de Desenvolvimento de Interface.
+    
+    ESTRUTURA DO SITE:
+    1. Toggle Escuro/Claro - Botão fixo para alternar tema
+    2. Tela de Login/Cadastro - Autenticação (interface apenas)
+    3. Menu Principal - Navegação entre funcionalidades
+    4. Configurações - Personalização da cor da mesa
+    5. Tela de Embaralhamento - Animação 3D de riffle shuffle
+    6. Tela do Jogo - Mesa de truco com 4 jogadores
+    7. Modal de Aposta - Diálogo para truco/6/9/12
+    8. Tela de Vitória/Derrota - Resultado final da partida
+    9. Tela "Como Jogar" - Regras, cartas, contato (carrossel,
+       cartões explicativos, abas, pesquisa, formulário, rodapé)
+    
+    REQUISITOS ATENDIDOS:
+    - Cartões (cartas do jogo + cartões explicativos)
+    - Abas de pesquisa (navegação por abas + campo de busca)
+    - Seção de contato com formulário
+    - Carrossel de imagens/conteúdo
+    - Imagens (ícones visuais nas cartas e carrossel)
+    - Cartões explicativos (regras e hierarquia)
+    - Modo escuro/claro (toggle persistente)
+    - Rodapé
+    
+    ACESSIBILIDADE (WCAG):
+    - Contraste mínimo AA em todos os textos
+    - aria-labels nos controles interativos
+    - role="dialog" no modal
+    - Labels associados a todos os inputs
+    - Focus visível (outline dourado)
+    ============================================================
+    -->
+
+    <!-- Toggle Modo Escuro/Claro - Botão fixo no canto superior direito -->
+    <button class="theme-toggle" id="darkLightToggle" onclick="toggleDarkLight()" aria-label="Alternar modo escuro/claro">&#9790;</button>
+
+    <!-- Tela de Login/Cadastro - Interface de autenticação com abas (Entrar/Cadastrar) -->
+    <!-- Apenas interface visual, sem conexão com banco de dados -->
+    <div id="login-screen" class="screen">
+        <div class="login-container">
+            <h1 class="login-title">TRUCO</h1>
+            <p class="login-subtitle">12 Pontos</p>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')" aria-label="Aba de login">Entrar</button>
+                <button class="tab-btn" id="tab-register" onclick="switchTab('register')" aria-label="Aba de cadastro">Cadastrar</button>
+            </div>
+
+            <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
+                <label for="login-user">Usuário</label>
+                <input type="text" id="login-user" placeholder="Digite seu usuário" required autocomplete="username">
+                <label for="login-pass">Senha</label>
+                <input type="password" id="login-pass" placeholder="Digite sua senha" required autocomplete="current-password">
+                <button type="submit" class="btn-submit">Entrar</button>
+            </form>
+
+            <form id="form-register" class="auth-form hidden" onsubmit="handleRegister(event)">
+                <label for="reg-user">Usuário</label>
+                <input type="text" id="reg-user" placeholder="Escolha um usuário" required autocomplete="username">
+                <label for="reg-email">E-mail</label>
+                <input type="email" id="reg-email" placeholder="seu@email.com" required autocomplete="email">
+                <label for="reg-pass">Senha</label>
+                <input type="password" id="reg-pass" placeholder="Crie uma senha" required autocomplete="new-password">
+                <label for="reg-pass-confirm">Confirmar Senha</label>
+                <input type="password" id="reg-pass-confirm" placeholder="Repita a senha" required autocomplete="new-password">
+                <button type="submit" class="btn-submit">Cadastrar</button>
+            </form>
+        </div>
     </div>
 
-    <!-- Menu de Configurações -->
-    <div id="settings-menu" class="menu-container hidden">
-        <h2>CONFIGURAÇÕES</h2>
-        <div class="settings-group">
-            <label for="theme-select">Cor da Mesa (Tema):</label>
-            <select id="theme-select">
-                <option value="green">Verde Clássico</option>
-                <option value="blue">Azul Casino</option>
-                <option value="red">Vermelho Sangue</option>
-            </select>
+    <!-- Menu Principal - Hub de navegação após login -->
+    <!-- Opções: Jogar, Como Jogar, Configurações, Sair -->
+    <div id="main-menu" class="screen hidden">
+        <div class="menu-container">
+            <h1 class="menu-title">TRUCO 12 PONTOS</h1>
+            <p class="welcome-msg" id="welcome-msg">Bem-vindo, Jogador!</p>
+            <button class="menu-btn" onclick="startGame()" aria-label="Iniciar nova partida">Jogar Nova Partida</button>
+            <button class="menu-btn" onclick="openHowToPlay()" aria-label="Como jogar">Como Jogar</button>
+            <button class="menu-btn" onclick="openSettings()" aria-label="Abrir configurações">Configurações</button>
+            <button class="menu-btn btn-logout" onclick="logout()" aria-label="Sair da conta">Sair</button>
         </div>
-        <button class="menu-btn" onclick="saveSettings()">Salvar e Voltar</button>
     </div>
 
-    <!-- Jogo (Oculto inicialmente) -->
-    <div class="game-container hidden" id="game-ui">
-        
-        <div class="scoreboard">
-            <div class="team-score" id="t1-panel">
-                <div class="label">Seu Time</div>
-                <div class="points" id="score-t1">0</div>
+    <!-- Configurações - Personalização do tema da mesa (verde/azul/vermelho) -->
+    <div id="settings-menu" class="screen hidden">
+        <div class="menu-container">
+            <h2 class="menu-title">CONFIGURAÇÕES</h2>
+            <div class="settings-group">
+                <label for="theme-select">Cor da Mesa:</label>
+                <select id="theme-select" aria-label="Selecionar tema da mesa">
+                    <option value="green">Verde Clássico</option>
+                    <option value="blue">Azul Casino</option>
+                    <option value="red">Vermelho Sangue</option>
+                </select>
             </div>
-            <div class="game-status-center">
-                <div id="match-value">VALENDO 1 PONTO</div>
-                <div id="info-log">Iniciando jogo...</div>
-            </div>
-            <div class="team-score" id="t2-panel">
-                <div class="label">Adversários</div>
-                <div class="points" id="score-t2">0</div>
+            <button class="menu-btn" onclick="saveSettings()">Salvar e Voltar</button>
+        </div>
+    </div>
+
+    <!-- Tela de Embaralhamento - Animação 3D de riffle shuffle antes de iniciar -->
+    <div id="shuffle-screen" class="screen hidden">
+        <div class="shuffle-container">
+            <h2 class="shuffle-title">Embaralhando...</h2>
+            <div id="shuffle-perspective">
+                <div id="shuffle-deck"></div>
             </div>
         </div>
+    </div>
 
-        <div class="poker-table">
-            <div class="player-seat seat-top" id="seat-2">
-                <div class="player-label">Parceiro</div>
-                <div class="hand-slots" id="hand-2"></div>
-            </div>
-
-            <div class="player-seat seat-right" id="seat-1">
-                <div class="player-label">Oponente 1</div>
-                <div class="hand-slots" id="hand-1"></div>
-            </div>
-
-            <div class="player-seat seat-left" id="seat-3">
-                <div class="player-label">Oponente 2</div>
-                <div class="hand-slots" id="hand-3"></div>
-            </div>
-
-            <div class="player-seat seat-bottom" id="seat-0">
-                <div class="vaza-tracker">
-                    <div class="vaza-dot" id="vaza-0">-</div>
-                    <div class="vaza-dot" id="vaza-1">-</div>
-                    <div class="vaza-dot" id="vaza-2">-</div>
+    <!-- Tela do Jogo - Mesa de truco com 4 assentos, placar e área central -->
+    <!-- Jogador 0 (Você) = baixo, Jogador 1 (Oponente) = direita,
+         Jogador 2 (Parceiro) = cima, Jogador 3 (Oponente) = esquerda -->
+    <div id="game-ui" class="screen hidden">
+        <div class="game-container">
+            <div class="scoreboard">
+                <div class="team-score" id="t1-panel">
+                    <div class="label">Seu Time</div>
+                    <div class="points" id="score-t1">0</div>
                 </div>
-                <div class="hand-slots" id="hand-0"></div>
-                <div class="player-label">Você</div>
+                <div class="game-status-center">
+                    <div id="match-value">VALENDO 1 PONTO</div>
+                    <div id="info-log">Iniciando jogo...</div>
+                </div>
+                <div class="team-score" id="t2-panel">
+                    <div class="label">Adversários</div>
+                    <div class="points" id="score-t2">0</div>
+                </div>
             </div>
 
-            <div class="center-arena">
-                <div class="played-card-slot slot-top" id="play-slot-2"></div>
-                <div class="played-card-slot slot-right" id="play-slot-1"></div>
-                <div class="played-card-slot slot-left" id="play-slot-3"></div>
-                <div class="played-card-slot slot-bottom" id="play-slot-0"></div>
+            <div class="poker-table">
+                <div class="player-seat seat-top" id="seat-2">
+                    <div class="player-label">Parceiro</div>
+                    <div class="hand-slots" id="hand-2"></div>
+                </div>
+                <div class="player-seat seat-right" id="seat-1">
+                    <div class="player-label">Oponente 1</div>
+                    <div class="hand-slots" id="hand-1"></div>
+                </div>
+                <div class="player-seat seat-left" id="seat-3">
+                    <div class="player-label">Oponente 2</div>
+                    <div class="hand-slots" id="hand-3"></div>
+                </div>
+                <div class="player-seat seat-bottom" id="seat-0">
+                    <div class="vaza-tracker">
+                        <div class="vaza-dot" id="vaza-0" aria-label="Resultado rodada 1">-</div>
+                        <div class="vaza-dot" id="vaza-1" aria-label="Resultado rodada 2">-</div>
+                        <div class="vaza-dot" id="vaza-2" aria-label="Resultado rodada 3">-</div>
+                    </div>
+                    <div class="hand-slots" id="hand-0"></div>
+                    <div class="player-label">Você</div>
+                </div>
+                <div class="center-arena">
+                    <div class="played-card-slot slot-top" id="play-slot-2"></div>
+                    <div class="played-card-slot slot-right" id="play-slot-1"></div>
+                    <div class="played-card-slot slot-left" id="play-slot-3"></div>
+                    <div class="played-card-slot slot-bottom" id="play-slot-0"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="action-bar">
-            <button class="btn btn-menu-back" onclick="backToMenu()">Sair</button>
-            <button class="btn btn-truco" id="btn-truco" onclick="playerRaisesAposta()">PEDIR TRUCO</button>
+            <div class="action-bar">
+                <button class="btn btn-menu-back" onclick="backToMenu()" aria-label="Voltar ao menu">Sair</button>
+                <button class="btn btn-truco" id="btn-truco" onclick="playerRaisesAposta()" aria-label="Pedir truco">PEDIR TRUCO</button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal de Aposta -->
-    <div class="modal-overlay" id="aposta-modal">
+    <!-- Modal de Aposta - Diálogo para aceitar/aumentar/correr quando pedem truco -->
+    <div class="modal-overlay" id="aposta-modal" role="dialog" aria-labelledby="m-title">
         <div class="modal-box">
             <div class="modal-title" id="m-title">DESAFIO!</div>
             <div class="modal-desc" id="m-desc">O time adversário aumentou o valor da rodada.</div>
@@ -419,497 +191,182 @@
         </div>
     </div>
 
-    <script>
-        // --- SISTEMA DE MENU E TEMAS ---
-        function applyTheme(theme) {
-            document.body.className = ''; // Reseta classes
-            if (theme === 'blue') document.body.classList.add('theme-blue');
-            if (theme === 'red') document.body.classList.add('theme-red');
-        }
-
-        function loadSavedTheme() {
-            const savedTheme = localStorage.getItem('truco-theme') || 'green';
-            document.getElementById('theme-select').value = savedTheme;
-            applyTheme(savedTheme);
-        }
-
-        function openSettings() {
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('settings-menu').classList.remove('hidden');
-        }
-
-        function saveSettings() {
-            const selectedTheme = document.getElementById('theme-select').value;
-            localStorage.setItem('truco-theme', selectedTheme);
-            applyTheme(selectedTheme);
-            
-            document.getElementById('settings-menu').classList.add('hidden');
-            document.getElementById('main-menu').classList.remove('hidden');
-        }
-
-        function startGame() {
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('game-ui').classList.remove('hidden');
-            initMatch();
-        }
-
-        function backToMenu() {
-            if(confirm("Tem certeza que deseja sair para o menu? O progresso do jogo será perdido.")) {
-                document.getElementById('game-ui').classList.add('hidden');
-                document.getElementById('main-menu').classList.remove('hidden');
-            }
-        }
-
-
-        // --- LÓGICA DO JOGO ---
-        // Força das Cartas sem Desenho
-        const CARD_POWERS = {
-            '4 PAUS': 100,
-            '7 CORACAO': 99,
-            'A ESPADA': 98,
-            '7 OURO': 97,
-            'JOKER': 50,
-            '3': 15,
-            '2': 14,
-            'A': 13,
-            'K': 12,
-            'J': 11,
-            'Q': 10
-        };
-
-        let state = {
-            scoreTeam1: 0,
-            scoreTeam2: 0,
-            handValue: 1, 
-            lastToRaiseTeam: null,
-            currentVaza: 0,
-            hands: [[], [], [], []],
-            playedThisVaza: [],
-            vazaWinners: [],
-            turn: 0,
-            dealer: 3,
-            vazaOpener: 0,
-            waitingDecision: false,
-            isMaoDe11: false,
-            isMaoDeFerro: false
-        };
-
-        function initMatch() {
-            state.scoreTeam1 = 0;
-            state.scoreTeam2 = 0;
-            state.dealer = Math.floor(Math.random() * 4);
-            startHand();
-        }
-
-        function buildDeck() {
-            let deck = [];
-            const ranks = ['Q', 'J', 'K', 'A', '2', '3'];
-            ranks.forEach(r => {
-                if (r !== 'A') deck.push({ text: r, color: 'c-black' }, { text: r, color: 'c-red' });
-                if (r === 'A') deck.push({ text: 'A', color: 'c-black' }, { text: 'A', color: 'c-red' });
-                deck.push({ text: r, color: 'c-black' });
-                deck.push({ text: r, color: 'c-red' });
-            });
-
-            deck.push({ text: '4 PAUS', color: 'c-black' });
-            deck.push({ text: '7 CORACAO', color: 'c-red' });
-            deck.push({ text: 'A ESPADA', color: 'c-black' });
-            deck.push({ text: '7 OURO', color: 'c-red' });
-
-            deck.push({ text: 'JOKER', color: 'c-joker' });
-            deck.push({ text: 'JOKER', color: 'c-joker' });
-
-            return deck;
-        }
-
-        function startHand() {
-            state.currentVaza = 0;
-            state.playedThisVaza = [];
-            state.vazaWinners = [];
-            state.handValue = 1;
-            state.lastToRaiseTeam = null;
-            state.waitingDecision = false;
-
-            state.isMaoDe11 = (state.scoreTeam1 === 11 || state.scoreTeam2 === 11);
-            state.isMaoDeFerro = (state.scoreTeam1 === 11 && state.scoreTeam2 === 11);
-
-            if (state.isMaoDeFerro) {
-                state.handValue = 1;
-                updateLog("MÃO DE FERRO - No Escuro!");
-            } else if (state.isMaoDe11) {
-                state.handValue = 3;
-                updateLog("MÃO DE 11 Ativa.");
-            } else {
-                updateLog("Nova rodada iniciada. Jogue!");
-            }
-
-            state.dealer = (state.dealer + 1) % 4;
-            state.turn = (state.dealer + 1) % 4;
-            state.vazaOpener = state.turn;
-
-            let deck = buildDeck();
-            deck.sort(() => Math.random() - 0.5);
-
-            for (let i = 0; i < 4; i++) {
-                state.hands[i] = [deck.pop(), deck.pop(), deck.pop()];
-            }
-
-            resetVazaDots();
-            clearTableSlots();
-            renderUI();
-
-            if (state.isMaoDe11 && !state.isMaoDeFerro) {
-                handleMaoDe11Logic();
-            } else {
-                if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
-            }
-        }
-
-        function updateLog(msg) {
-            document.getElementById('info-log').innerText = msg;
-        }
-
-        function clearTableSlots() {
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`play-slot-${i}`).innerHTML = "";
-            }
-        }
-
-        function resetVazaDots() {
-            for (let i = 0; i < 3; i++) {
-                let dot = document.getElementById(`vaza-${i}`);
-                dot.className = "vaza-dot";
-                dot.innerText = "-";
-            }
-        }
-
-        function getNextRaiseValue(current) {
-            if (current === 1) return 3;
-            if (current === 3) return 6;
-            if (current === 6) return 9;
-            if (current === 9) return 12;
-            return 12;
-        }
-
-        function renderUI() {
-            document.getElementById('score-t1').innerText = state.scoreTeam1;
-            document.getElementById('score-t2').innerText = state.scoreTeam2;
-            document.getElementById('match-value').innerText = `VALENDO ${state.handValue} PONTO(S)`;
-
-            const isT1Turn = (state.turn === 0 || state.turn === 2);
-            document.getElementById('t1-panel').className = `team-score ${isT1Turn ? 'active-turn' : ''}`;
-            document.getElementById('t2-panel').className = `team-score ${!isT1Turn ? 'active-turn' : ''}`;
-
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`seat-${i}`).className = `player-seat seat-${getSeatName(i)} ${state.turn === i ? 'active-player-glow' : ''}`;
-            }
-
-            const pHand = document.getElementById('hand-0');
-            pHand.innerHTML = "";
-            state.hands[0].forEach((card, idx) => {
-                const cDiv = document.createElement('div');
-                if (state.isMaoDeFerro) {
-                    cDiv.className = "card card-back";
-                    cDiv.innerText = "?";
-                } else {
-                    cDiv.className = `card ${card.color}`;
-                    cDiv.innerText = card.text;
-                    cDiv.onclick = () => playerPlayCard(idx);
-                }
-                pHand.appendChild(cDiv);
-            });
-
-            for (let b = 1; b <= 3; b++) {
-                const bHand = document.getElementById(`hand-${b}`);
-                bHand.innerHTML = "";
-                state.hands[b].forEach(() => {
-                    const cDiv = document.createElement('div');
-                    cDiv.className = "card card-back";
-                    cDiv.innerText = "?";
-                    bHand.appendChild(cDiv);
-                });
-            }
-
-            const btnT = document.getElementById('btn-truco');
-            let nextVal = getNextRaiseValue(state.handValue);
-            
-            if (nextVal === 3) btnT.innerText = "PEDIR TRUCO";
-            else if (nextVal === 6) btnT.innerText = "PEDIR 6";
-            else if (nextVal === 9) btnT.innerText = "PEDIR 9";
-            else if (nextVal === 12) btnT.innerText = "PEDIR 12";
-
-            if (state.handValue === 12 || state.lastToRaiseTeam === 1 || state.waitingDecision || state.isMaoDe11 || state.isMaoDeFerro) {
-                btnT.disabled = true;
-            } else {
-                btnT.disabled = false;
-            }
-        }
-
-        function getSeatName(id) {
-            return id === 0 ? 'bottom' : id === 1 ? 'right' : id === 2 ? 'top' : 'left';
-        }
-
-        function playerPlayCard(idx) {
-            if (state.turn !== 0 || state.waitingDecision) return;
-            const card = state.hands[0].splice(idx, 1)[0];
-            processCardPlacement(0, card);
-        }
-
-        function processCardPlacement(playerID, card) {
-            state.playedThisVaza.push({ playerId: playerID, card: card, team: (playerID % 2 === 0 ? 1 : 2) });
-            
-            const slot = document.getElementById(`play-slot-${playerID}`);
-            slot.innerHTML = `<div class="card ${card.color}">${card.text}</div>`;
-
-            state.turn = (state.turn + 1) % 4;
-            renderUI();
-
-            setTimeout(evaluateVazaProgress, 800);
-        }
-
-        async function executeBotTurn() {
-            if (state.turn === 0 || state.waitingDecision) return;
-            const currentBot = state.turn;
-            const botTeam = (currentBot % 2 === 0 ? 1 : 2);
-
-            if (state.handValue < 12 && state.lastToRaiseTeam !== botTeam && !state.isMaoDe11 && !state.isMaoDeFerro) {
-                let hasGoodCard = state.hands[currentBot].some(c => CARD_POWERS[c.text] >= 97);
-                if (hasGoodCard && Math.random() < 0.15) {
-                    botRaisesAposta(currentBot);
-                    return;
-                }
-            }
-
-            let cardIdx = 0;
-            if (state.playedThisVaza.length > 0) {
-                let currentMax = Math.max(...state.playedThisVaza.map(p => CARD_POWERS[p.card.text]));
-                let choices = state.hands[currentBot]
-                    .map((c, i) => ({ c, i, p: CARD_POWERS[c.text] }))
-                    .filter(x => x.p > currentMax)
-                    .sort((a,b) => a.p - b.p);
-
-                if (choices.length > 0) cardIdx = choices[0].i;
-            }
-
-            const card = state.hands[currentBot].splice(cardIdx, 1)[0];
-            processCardPlacement(currentBot, card);
-        }
-
-        function evaluateVazaProgress() {
-            if (state.playedThisVaza.length < 4) {
-                if (state.turn !== 0) executeBotTurn();
-                return;
-            }
-
-            let bestPlay = state.playedThisVaza[0];
-            let isTie = false;
-
-            for (let i = 1; i < state.playedThisVaza.length; i++) {
-                let currentPower = CARD_POWERS[state.playedThisVaza[i].card.text];
-                let bestPower = CARD_POWERS[bestPlay.card.text];
-
-                if (currentPower > bestPower) {
-                    bestPlay = state.playedThisVaza[i];
-                    isTie = false;
-                } else if (currentPower === bestPower) {
-                    if (state.playedThisVaza[i].team !== bestPlay.team) {
-                        isTie = true;
-                    }
-                }
-            }
-
-            let winnerTeam = 'tie';
-            const dot = document.getElementById(`vaza-${state.currentVaza}`);
-
-            if (isTie) {
-                dot.className = "vaza-dot tie";
-                dot.innerText = "E";
-                updateLog("Empatou a rodada!");
-            } else {
-                winnerTeam = bestPlay.team;
-                dot.className = `vaza-dot t${winnerTeam}`;
-                dot.innerText = winnerTeam === 1 ? "V" : "D";
-                updateLog(`Time ${winnerTeam === 1 ? 'Seu':'Adversário'} ganhou a rodada.`);
-                state.turn = bestPlay.playerId;
-                state.vazaOpener = state.turn;
-            }
-
-            state.vazaWinners.push(winnerTeam);
-            state.playedThisVaza = [];
-            state.currentVaza++;
-
-            let handWinner = checkHandWinner();
-            if (handWinner) {
-                setTimeout(() => resolveHandWinner(handWinner), 1000);
-            } else {
-                setTimeout(() => {
-                    clearTableSlots();
-                    renderUI();
-                    if (state.turn !== 0) executeBotTurn();
-                }, 1000);
-            }
-        }
-
-        function checkHandWinner() {
-            const w = state.vazaWinners;
-            const t1 = w.filter(x => x === 1).length;
-            const t2 = w.filter(x => x === 2).length;
-
-            if (t1 === 2) return 1;
-            if (t2 === 2) return 2;
-
-            if (w[0] === 'tie' && w[1] !== 'tie') return w[1];
-            if (w[0] !== 'tie' && w[1] === 'tie') return w[0];
-            if (w[2] === 'tie' && w[0] !== 'tie') return w[0];
-
-            if (w.length === 3 && w.every(x => x === 'tie')) {
-                return (state.dealer % 2 === 0) ? 2 : 1; 
-            }
-            return null;
-        }
-
-        function resolveHandWinner(winnerTeam) {
-            const pointsGained = state.handValue;
-            if (winnerTeam === 1) {
-                state.scoreTeam1 += pointsGained;
-                alert(`Boa! Seu time marcou +${pointsGained} ponto(s).`);
-            } else {
-                state.scoreTeam2 += pointsGained;
-                alert(`Opa! Adversários marcaram +${pointsGained} ponto(s).`);
-            }
-
-            if (state.scoreTeam1 >= 12) {
-                alert("FIM DE JOGO! SEU TIME FEZ 12 PONTOS E GANHOU A PARTIDA! 🏆");
-                backToMenu(); // Retorna ao menu após ganhar
-            } else if (state.scoreTeam2 >= 12) {
-                alert("FIM DE JOGO! ADVERSÁRIOS CHEGARAM A 12 PONTOS. VITORIA DELES! 🤖");
-                backToMenu(); // Retorna ao menu após perder
-            } else {
-                startHand();
-            }
-        }
-
-        function playerRaisesAposta() {
-            if (state.turn !== 0 || state.waitingDecision) return;
-            state.waitingDecision = true;
-            state.lastToRaiseTeam = 1;
-            let targetValue = getNextRaiseValue(state.handValue);
-            
-            updateLog(`Você pediu para aumentar para ${targetValue}!`);
-
-            setTimeout(() => {
-                let bot1P = state.hands[1].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
-                let bot3P = state.hands[3].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
-                let maxBotPower = Math.max(bot1P, bot3P);
-
-                if (maxBotPower > 45 && targetValue < 12 && Math.random() < 0.25) {
-                    let counterValue = getNextRaiseValue(targetValue);
-                    state.handValue = targetValue;
-                    state.waitingDecision = false;
-                    botRaisesAposta(1, counterValue);
-                } else if (maxBotPower > 28 || Math.random() < 0.5) {
-                    state.handValue = targetValue;
-                    alert(`Bots aceitaram! A rodada agora vale ${state.handValue} pontos.`);
-                    state.waitingDecision = false;
-                    renderUI();
-                } else {
-                    alert(`Os Bots correram! Seu time ganha os pontos anteriores (${state.handValue}).`);
-                    state.waitingDecision = false;
-                    resolveHandWinner(1);
-                }
-            }, 1200);
-        }
-
-        function botRaisesAposta(botId, forcedValue = null) {
-            state.waitingDecision = true;
-            state.lastToRaiseTeam = 2;
-            let targetValue = forcedValue ? forcedValue : getNextRaiseValue(state.handValue);
-
-            updateLog(`Adversários pediram para aumentar para ${targetValue}!`);
-
-            const modal = document.getElementById('aposta-modal');
-            document.getElementById('m-title').innerText = `AUMENTARAM PARA ${targetValue}!`;
-            document.getElementById('m-desc').innerText = `O que o seu time deseja fazer?`;
-
-            document.getElementById('btn-m-accept').onclick = () => {
-                state.handValue = targetValue;
-                modal.style.display = 'none';
-                state.waitingDecision = false;
-                renderUI();
-                if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
-            };
-
-            document.getElementById('btn-m-fold').onclick = () => {
-                modal.style.display = 'none';
-                state.waitingDecision = false;
-                resolveHandWinner(2);
-            };
-
-            const btnRaise = document.getElementById('btn-m-raise');
-            let nextLevel = getNextRaiseValue(targetValue);
-            if (targetValue >= 12) {
-                btnRaise.style.display = 'none';
-            } else {
-                btnRaise.style.display = 'block';
-                btnRaise.innerText = `PEDIR ${nextLevel}`;
-                btnRaise.onclick = () => {
-                    modal.style.display = 'none';
-                    state.handValue = targetValue;
-                    state.lastToRaiseTeam = 1;
-                    state.waitingDecision = false;
-                    playerRaisesAposta();
-                };
-            }
-
-            modal.style.display = 'flex';
-        }
-
-        function handleMaoDe11Logic() {
-            state.waitingDecision = true;
-            if (state.scoreTeam1 === 11) {
-                const modal = document.getElementById('aposta-modal');
-                document.getElementById('m-title').innerText = "MÃO DE 11 DO SEU TIME";
-                document.getElementById('m-desc').innerText = "Vocês têm 11 pontos. Desejam jogar valendo 3 pontos ou correr (concedendo 1 ponto aos bots)?";
-                document.getElementById('btn-m-raise').style.display = 'none';
-                
-                document.getElementById('btn-m-accept').onclick = () => {
-                    state.handValue = 3;
-                    modal.style.display = 'none';
-                    state.waitingDecision = false;
-                    renderUI();
-                    if (state.turn !== 0) setTimeout(executeBotTurn, 1000);
-                };
-
-                document.getElementById('btn-m-fold').onclick = () => {
-                    modal.style.display = 'none';
-                    state.waitingDecision = false;
-                    resolveHandWinner(2);
-                };
-                modal.style.display = 'flex';
-            } else {
-                setTimeout(() => {
-                    let b1 = state.hands[1].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
-                    let b3 = state.hands[3].reduce((acc, c) => acc + CARD_POWERS[c.text], 0);
-                    if (Math.max(b1, b3) > 30) {
-                        state.handValue = 3;
-                        updateLog("Os bots aceitaram jogar a Mão de 11 deles!");
-                        state.waitingDecision = false;
-                        renderUI();
-                        if (state.turn !== 0) executeBotTurn();
-                    } else {
-                        alert("Os Bots preferiram correr na Mão de 11 deles! Você ganha +1 ponto.");
-                        state.waitingDecision = false;
-                        resolveHandWinner(1);
-                    }
-                }, 1500);
-            }
-        }
-
-        // --- INICIALIZAÇÃO ---
-        window.onload = () => {
-            loadSavedTheme(); 
-            // O Menu Principal já é exibido por padrão porque o contêiner do jogo está marcado como 'hidden'
-        };
-    </script>
+    <!-- Tela de Vitória - Exibida quando o jogador atinge 12 pontos -->
+    <div id="victory-screen" class="screen hidden">
+        <div class="result-container victory">
+            <div class="result-icon">&#9813;</div>
+            <h1 class="result-title">VITÓRIA!</h1>
+            <p class="result-text">Parabéns! Seu time venceu a partida!</p>
+            <div class="result-score" id="victory-score"></div>
+            <button class="menu-btn" onclick="goToMenu()">Voltar ao Menu</button>
+        </div>
+    </div>
+
+    <!-- Tela de Derrota - Exibida quando os adversários atingem 12 pontos -->
+    <div id="defeat-screen" class="screen hidden">
+        <div class="result-container defeat">
+            <div class="result-icon">&#9888;</div>
+            <h1 class="result-title">DERROTA</h1>
+            <p class="result-text">Os adversários venceram desta vez. Tente novamente!</p>
+            <div class="result-score" id="defeat-score"></div>
+            <button class="menu-btn" onclick="goToMenu()">Voltar ao Menu</button>
+        </div>
+    </div>
+
+    <!--
+    Tela "Como Jogar" - Página informativa com todos os requisitos:
+    - ABAS DE NAVEGAÇÃO: Regras | Cartas | Contato
+    - BARRA DE PESQUISA: Filtra cartões por palavra-chave
+    - CARROSSEL: 4 slides explicando as regras principais
+    - CARTÕES EXPLICATIVOS: Cards com ícones sobre distribuição, vazas, empate e truco
+    - IMAGENS: Ícones visuais (emoji/unicode) representando cada conceito
+    - SEÇÃO DE CONTATO: Formulário com nome, e-mail, assunto e mensagem
+    - RODAPÉ: Informações do projeto no final da página
+    -->
+    <div id="howtoplay-screen" class="screen hidden">
+        <div class="htp-page">
+            <header class="htp-header">
+                <h1 class="htp-title">Como Jogar Truco</h1>
+                <button class="btn btn-menu-back" onclick="goToMenu()">Voltar</button>
+            </header>
+
+            <!-- Abas de pesquisa/navegação - Requisito: abas de pesquisa -->
+            <div class="htp-tabs">
+                <button class="htp-tab active" onclick="switchHtpTab('regras')">Regras</button>
+                <button class="htp-tab" onclick="switchHtpTab('cartas')">Cartas</button>
+                <button class="htp-tab" onclick="switchHtpTab('contato')">Contato</button>
+            </div>
+
+            <!-- Barra de pesquisa - Filtra conteúdo dos cartões em tempo real -->
+            <div class="htp-search">
+                <input type="text" id="htp-search-input" placeholder="Pesquisar regras, cartas..." oninput="filterHtpContent()" aria-label="Pesquisar conteúdo">
+            </div>
+
+            <!-- ABA REGRAS -->
+            <div class="htp-content" id="htp-regras">
+                <!-- Carrossel - Requisito: carrossel com imagens e conteúdo -->
+                <div class="carousel">
+                    <button class="carousel-btn prev" onclick="moveCarousel(-1)" aria-label="Anterior">&#10094;</button>
+                    <div class="carousel-track" id="carousel-track">
+                        <div class="carousel-slide active">
+                            <div class="carousel-img">&#127183;</div>
+                            <h3>Objetivo</h3>
+                            <p>Seja o primeiro time a atingir 12 pontos. Cada rodada é dividida em até 3 vazas.</p>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="carousel-img">&#9994;</div>
+                            <h3>Truco!</h3>
+                            <p>Peça truco para aumentar o valor da rodada: 1→3→6→9→12 pontos.</p>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="carousel-img">&#127942;</div>
+                            <h3>Mão de 11</h3>
+                            <p>Quando um time chega a 11 pontos, a mão vale 3. O time decide se joga ou corre.</p>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="carousel-img">&#128274;</div>
+                            <h3>Mão de Ferro</h3>
+                            <p>Se ambos os times estão com 11 pontos, joga-se no escuro (sem ver as cartas).</p>
+                        </div>
+                    </div>
+                    <button class="carousel-btn next" onclick="moveCarousel(1)" aria-label="Próximo">&#10095;</button>
+                    <div class="carousel-dots" id="carousel-dots"></div>
+                </div>
+
+                <!-- Cartões explicativos - Requisito: cartões com informações -->
+                <h2 class="htp-section-title">Regras Básicas</h2>
+                <div class="info-cards" id="info-cards-regras">
+                    <div class="info-card" data-search="distribuição cartas baralho">
+                        <div class="info-card-icon">&#127183;</div>
+                        <h3>Distribuição</h3>
+                        <p>Cada jogador recebe 3 cartas. O jogo é 2 contra 2 (você + parceiro vs. oponentes).</p>
+                    </div>
+                    <div class="info-card" data-search="vaza rodada turno">
+                        <div class="info-card-icon">&#9654;</div>
+                        <h3>Vazas</h3>
+                        <p>Cada rodada tem até 3 vazas. Quem vencer 2 vazas ganha a rodada e os pontos.</p>
+                    </div>
+                    <div class="info-card" data-search="empate primeira vaza">
+                        <div class="info-card-icon">&#9878;</div>
+                        <h3>Empate</h3>
+                        <p>Se a 1ª vaza empatar, quem ganhar a 2ª leva a rodada. Se tudo empatar, quem é mão vence.</p>
+                    </div>
+                    <div class="info-card" data-search="truco aumento aposta pedir">
+                        <div class="info-card-icon">&#128227;</div>
+                        <h3>Pedir Truco</h3>
+                        <p>Qualquer time pode pedir truco. O adversário aceita, corre ou aumenta o valor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA CARTAS -->
+            <div class="htp-content hidden" id="htp-cartas">
+                <h2 class="htp-section-title">Hierarquia das Cartas</h2>
+                <p class="htp-desc">Da mais forte para a mais fraca:</p>
+                <div class="info-cards" id="info-cards-cartas">
+                    <div class="info-card card-rank" data-search="manilha 4 paus zap">
+                        <div class="info-card-icon rank-icon c-black">4♣</div>
+                        <h3>Zap (4 de Paus)</h3>
+                        <p>A carta mais forte do jogo. Vence qualquer outra.</p>
+                    </div>
+                    <div class="info-card card-rank" data-search="manilha 7 copas coração">
+                        <div class="info-card-icon rank-icon c-red">7♥</div>
+                        <h3>Copeta (7 de Copas)</h3>
+                        <p>Segunda carta mais forte. Só perde para o Zap.</p>
+                    </div>
+                    <div class="info-card card-rank" data-search="manilha ás espada espadilha">
+                        <div class="info-card-icon rank-icon c-black">A♠</div>
+                        <h3>Espadilha (Ás de Espadas)</h3>
+                        <p>Terceira carta mais forte do jogo.</p>
+                    </div>
+                    <div class="info-card card-rank" data-search="manilha 7 ouro ouros">
+                        <div class="info-card-icon rank-icon c-red">7♦</div>
+                        <h3>Sete de Ouros</h3>
+                        <p>A quarta manilha. Completa as 4 cartas especiais.</p>
+                    </div>
+                    <div class="info-card card-rank" data-search="3 três">
+                        <div class="info-card-icon rank-icon">3</div>
+                        <h3>Três</h3>
+                        <p>Depois das manilhas, o 3 é a carta mais forte.</p>
+                    </div>
+                    <div class="info-card card-rank" data-search="2 dois">
+                        <div class="info-card-icon rank-icon">2</div>
+                        <h3>Dois</h3>
+                        <p>Seguido pelo ás comum, rei, valete e dama.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA CONTATO - Requisito: seção de contato com formulário -->
+            <div class="htp-content hidden" id="htp-contato">
+                <h2 class="htp-section-title">Fale Conosco</h2>
+                <p class="htp-desc">Tem dúvidas ou sugestões? Envie uma mensagem!</p>
+                <form class="contact-form" onsubmit="handleContact(event)">
+                    <label for="contact-name">Nome</label>
+                    <input type="text" id="contact-name" placeholder="Seu nome" required>
+                    <label for="contact-email">E-mail</label>
+                    <input type="email" id="contact-email" placeholder="seu@email.com" required>
+                    <label for="contact-subject">Assunto</label>
+                    <select id="contact-subject">
+                        <option value="duvida">Dúvida sobre regras</option>
+                        <option value="bug">Reportar problema</option>
+                        <option value="sugestao">Sugestão</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                    <label for="contact-msg">Mensagem</label>
+                    <textarea id="contact-msg" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
+                    <button type="submit" class="btn-submit">Enviar Mensagem</button>
+                </form>
+            </div>
+
+            <!-- Rodapé - Requisito: rodapé do site -->
+            <footer class="htp-footer">
+                <p>Truco 12 Pontos &copy; 2026 — Projeto Acadêmico</p>
+                <p>Desenvolvimento de Interface | Jogos Simples em HTML/CSS/JS</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
