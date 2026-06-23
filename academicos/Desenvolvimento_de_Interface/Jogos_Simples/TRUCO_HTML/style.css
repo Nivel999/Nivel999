@@ -278,8 +278,13 @@ select:focus-visible {
 }
 
 @keyframes pulse {
-    from { opacity: 0.7; }
-    to { opacity: 1; }
+    from {
+        opacity: 0.7;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 #shuffle-perspective {
@@ -392,10 +397,29 @@ select:focus-visible {
     z-index: 10;
 }
 
-.seat-top { top: 0; left: 50%; transform: translateX(-50%); }
-.seat-left { left: 0; top: 50%; transform: translateY(-50%); }
-.seat-right { right: 0; top: 50%; transform: translateY(-50%); }
-.seat-bottom { bottom: 0; left: 50%; transform: translateX(-50%); }
+.seat-top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.seat-left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.seat-right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.seat-bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
 .player-label {
     background: rgba(0, 0, 0, 0.75);
@@ -437,10 +461,29 @@ select:focus-visible {
     align-items: center;
 }
 
-.slot-top { top: 8px; left: 50%; transform: translateX(-50%); }
-.slot-bottom { bottom: 8px; left: 50%; transform: translateX(-50%); }
-.slot-left { left: 8px; top: 50%; transform: translateY(-50%); }
-.slot-right { right: 8px; top: 50%; transform: translateY(-50%); }
+.slot-top {
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.slot-bottom {
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.slot-left {
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.slot-right {
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
 .card {
     width: 75px;
@@ -465,9 +508,18 @@ select:focus-visible {
     transform: translateY(-8px);
 }
 
-.card.c-black { color: var(--black-suit); }
-.card.c-red { color: var(--red-suit); }
-.card.c-joker { color: var(--joker-color); border-color: var(--joker-color); }
+.card.c-black {
+    color: var(--black-suit);
+}
+
+.card.c-red {
+    color: var(--red-suit);
+}
+
+.card.c-joker {
+    color: var(--joker-color);
+    border-color: var(--joker-color);
+}
 
 .card-corner {
     font-size: 0.65rem;
@@ -503,15 +555,13 @@ select:focus-visible {
 .card-back-pattern {
     width: 55px;
     height: 80px;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 3px;
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 4px,
-        rgba(255,255,255,0.08) 4px,
-        rgba(255,255,255,0.08) 8px
-    );
+    background: repeating-linear-gradient(45deg,
+            transparent,
+            transparent 4px,
+            rgba(255, 255, 255, 0.08) 4px,
+            rgba(255, 255, 255, 0.08) 8px);
 }
 
 /* Animação de entrega de cartas */
@@ -548,9 +598,17 @@ select:focus-visible {
     color: var(--text-light);
 }
 
-.vaza-dot.t1 { background: #27ae60; }
-.vaza-dot.t2 { background: #c0392b; }
-.vaza-dot.tie { background: #d4850a; }
+.vaza-dot.t1 {
+    background: #27ae60;
+}
+
+.vaza-dot.t2 {
+    background: #c0392b;
+}
+
+.vaza-dot.tie {
+    background: #d4850a;
+}
 
 .action-bar {
     display: flex;
@@ -569,9 +627,21 @@ select:focus-visible {
     transition: 0.2s;
 }
 
-.btn-truco { background: #d4850a; color: var(--text-light); }
-.btn-menu-back { background: #444; color: var(--text-light); }
-.btn:disabled { background: #444 !important; color: #777 !important; cursor: not-allowed; }
+.btn-truco {
+    background: #d4850a;
+    color: var(--text-light);
+}
+
+.btn-menu-back {
+    background: #444;
+    color: var(--text-light);
+}
+
+.btn:disabled {
+    background: #444 !important;
+    color: #777 !important;
+    cursor: not-allowed;
+}
 
 /* ============ MODAL ============ */
 .modal-overlay {
@@ -613,9 +683,38 @@ select:focus-visible {
     gap: 10px;
 }
 
-.btn-accept { background: #27ae60; color: var(--text-light); font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
-.btn-raise { background: #7b2d8b; color: var(--text-light); font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
-.btn-fold { background: #c0392b; color: var(--text-light); font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+.btn-accept {
+    background: #27ae60;
+    color: var(--text-light);
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-raise {
+    background: #7b2d8b;
+    color: var(--text-light);
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-fold {
+    background: #c0392b;
+    color: var(--text-light);
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
 
 /* ============ TELAS DE RESULTADO ============ */
 .result-container {
@@ -642,16 +741,26 @@ select:focus-visible {
     margin-bottom: 10px;
 }
 
-.victory .result-icon { color: var(--gold-accent); }
-.defeat .result-icon { color: #c0392b; }
+.victory .result-icon {
+    color: var(--gold-accent);
+}
+
+.defeat .result-icon {
+    color: #c0392b;
+}
 
 .result-title {
     font-size: 2rem;
     margin-bottom: 10px;
 }
 
-.victory .result-title { color: #27ae60; }
-.defeat .result-title { color: #c0392b; }
+.victory .result-title {
+    color: #27ae60;
+}
+
+.defeat .result-title {
+    color: #c0392b;
+}
 
 .result-text {
     color: #ddd;
@@ -885,8 +994,13 @@ body.light-mode .carousel-slide p {
     justify-content: center;
 }
 
-.carousel-btn.prev { left: 10px; }
-.carousel-btn.next { right: 10px; }
+.carousel-btn.prev {
+    left: 10px;
+}
+
+.carousel-btn.next {
+    right: 10px;
+}
 
 .carousel-dots {
     position: absolute;
@@ -973,8 +1087,13 @@ body.light-mode .info-card p {
     font-weight: bold;
 }
 
-.rank-icon.c-black { color: var(--black-suit); }
-.rank-icon.c-red { color: var(--red-suit); }
+.rank-icon.c-black {
+    color: var(--black-suit);
+}
+
+.rank-icon.c-red {
+    color: var(--red-suit);
+}
 
 .info-card.card-hidden {
     display: none;
