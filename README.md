@@ -72,10 +72,11 @@ Aqui você encontrará meus projetos acadêmicos, estudos e desafios de lógica 
 
 ## 📊 Estatísticas do GitHub
 
-![Estatísticas do GitHub](https://github-readme-stats.shion.dev/api?username=Nivel999&theme=dark&show_icons=true&include_all_commits=true&count_private=true)
+![Estatísticas do GitHub](https://github-readme-stats.shion.dev/api?username=Nivel999&theme=dark&show_icons=true)
 
-![Linguagens mais utilizadas](https://github-readme-stats.shion.dev/api/top-langs/?username=Nivel999&theme=dark&layout=compact)
+![Sequência de contribuições](https://streak-stats.demolab.com?user=Nivel999&theme=dark)
 
+![Linguagens mais utilizadas](https://github-readme-stats.shion.dev/api/top-langs/?username=Nivel999&theme=dark&layout=compact&exclude_repo=Nivel999&hide=html,css)
 ---
 
 ![Visualizações do perfil](https://komarev.com/ghpvc/?username=Nivel999&color=0e75b6&label=Visualiza%C3%A7%C3%B5es)
