@@ -6,7 +6,7 @@ Tenho trabalhado bastante com a lógica de negócio dentro do próprio banco (fu
 
 ## 🚀 Projetos em destaque
 
-- **Agendinha** — SaaS full stack desenvolvido com Next.js e PostgreSQL. Atualmente em desenvolvimento e mantido como projeto privado.
+- **Agendinha** — Sistema de agendamento para salões, com app do cliente e painel do gestor em Next.js, e regras de negócio no Supabase/PostgreSQL (PL/pgSQL, RLS e pg_cron), com testes automatizados e CI no GitHub Actions. Projeto privado.
 - **Edificheck** — Aplicação desenvolvida com Flutter e React, utilizando Supabase e Neon em sua arquitetura. Projeto privado.
 
 Aqui você encontrará meus projetos acadêmicos, estudos e desafios de lógica e programação.
