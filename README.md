@@ -6,7 +6,7 @@ Tenho trabalhado bastante com a lógica de negócio dentro do próprio banco (fu
 
 ## 🚀 Projetos em destaque
 
-- **Sistematiza** — SaaS full stack desenvolvido com Next.js e PostgreSQL. Atualmente em desenvolvimento e mantido como projeto privado.
+- **Agendinha** — SaaS full stack desenvolvido com Next.js e PostgreSQL. Atualmente em desenvolvimento e mantido como projeto privado.
 - **Edificheck** — Aplicação desenvolvida com Flutter e React, utilizando Supabase e Neon em sua arquitetura. Projeto privado.
 
 Aqui você encontrará meus projetos acadêmicos, estudos e desafios de lógica e programação.
