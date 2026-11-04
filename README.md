@@ -27,7 +27,7 @@ Aqui você também encontra meus projetos acadêmicos, estudos e desafios de ló
 
 ## 🌐 Contato
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/davi-oliveira-48b8501a3/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/davi-oliveira-silva-48b8501a3/)
 [![Email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:davioliveira1737@gmail.com)
 
 ## 💻 Tecnologias
