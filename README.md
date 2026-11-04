@@ -8,7 +8,7 @@ Desenvolvedor full stack em Brasília-DF. Construo produtos de ponta a ponta —
 
 ### Produto
 
-- **Vagaluz** (ex-Agendinha) — agendamento online com app do cliente e painel do gestor, PIX/cartão e confirmação no WhatsApp. Next.js + Supabase, regra de negócio em PL/pgSQL, RLS e pg_cron, 138 migrations, testes no banco, no front e E2E (Playwright em desktop, Android e iPhone). *Desenvolvedor full stack na LunicoDev.*
+- **[Vagaluz](https://vagaluz.app)** (ex-Agendinha) — agendamento online com app do cliente e painel do gestor, PIX/cartão e confirmação no WhatsApp. Next.js + Supabase, regra de negócio em PL/pgSQL, RLS e pg_cron, 138 migrations, testes no banco, no front e E2E (Playwright em desktop, Android e iPhone). *Desenvolvedor full stack na LunicoDev.*
 - **TapLead** — PWA de prospecção: busca leads de um nicho no mapa (Google Places), identifica WhatsApp e Instagram e exporta para Excel. React + Supabase Edge Functions.
 
 ### IA e automação
