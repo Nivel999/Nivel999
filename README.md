@@ -1,15 +1,29 @@
 # Olá, eu sou Davi Oliveira 👋
 
-Desenvolvedor full stack com experiência em aplicações web e mobile, bancos de dados relacionais e serviços em nuvem.
-
-Tenho trabalhado bastante com a lógica de negócio dentro do próprio banco (funções PL/pgSQL, Row Level Security e jobs agendados com pg_cron), com testes automatizados que cobrem tanto o front-end quanto o banco, e com integração contínua usando GitHub Actions.
+Desenvolvedor full stack em Brasília-DF. Construo produtos de ponta a ponta — banco, regra de negócio, interface, testes e deploy — e, cada vez mais, sistemas com **agentes de IA**.
 
 ## 🚀 Projetos em destaque
 
-- **Agendinha** — Sistema de agendamento para salões, com app do cliente e painel do gestor em Next.js, e regras de negócio no Supabase/PostgreSQL (PL/pgSQL, RLS e pg_cron), com testes automatizados e CI no GitHub Actions. Projeto privado.
-- **Edificheck** — Aplicação desenvolvida com Flutter e React, utilizando Supabase e Neon em sua arquitetura. Projeto privado.
+> A maioria é privada (código de produto ou de cliente). Posso mostrar numa conversa.
 
-Aqui você encontrará meus projetos acadêmicos, estudos e desafios de lógica e programação.
+### Produto
+
+- **Vagaluz** (ex-Agendinha) — agendamento online com app do cliente e painel do gestor, PIX/cartão e confirmação no WhatsApp. Next.js + Supabase, regra de negócio em PL/pgSQL, RLS e pg_cron, 138 migrations, testes no banco, no front e E2E (Playwright em desktop, Android e iPhone). *Desenvolvedor principal, em parceria com Luis Nicolau.*
+- **TapLead** — PWA de prospecção: busca leads de um nicho no mapa (Google Places), identifica WhatsApp e Instagram e exporta para Excel. React + Supabase Edge Functions.
+
+### IA e automação
+
+- **OCR-LLM** — OCR de matrículas de imóveis (PaddleOCR + ONNX Runtime, 7× mais rápido que o motor padrão) e análise documental com LLM local (Ollama/Qwen3), com evidência por página.
+- **Chat Bots WhatsApp** — base reutilizável de chatbots com Claude; vertical de advocacia com triagem, consulta ao DataJud e mascaramento de dados (LGPD). FastAPI + React.
+- **Gerador de Estudo** — plugin do Claude Code que mede o que você sabe e gera um manual de estudos no Notion.
+- **MCP de Banco de Dados** — servidor MCP somente leitura para múltiplos PostgreSQL + criação assistida de relatórios Power BI.
+- **Integrador de Documentação de APIs** — CLI: Postman → JSON / Google Sheets / XLSX / PostgreSQL.
+
+### Públicos
+
+[tasktracker-projeto](https://github.com/Nivel999/tasktracker-projeto) · [Busca-CEP](https://github.com/Nivel999/Busca-CEP) · [OCR-de-PDF](https://github.com/Nivel999/OCR-de-PDF) · [flappy-bird-c](https://github.com/Nivel999/flappy-bird-c)
+
+Aqui você também encontra meus projetos acadêmicos, estudos e desafios de lógica e programação.
 
 ## 🌐 Contato
 
@@ -40,6 +54,8 @@ Aqui você encontrará meus projetos acadêmicos, estudos e desafios de lógica 
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 ![Radix UI](https://img.shields.io/badge/Radix_UI-161618?style=for-the-badge&logo=radixui&logoColor=white)
 ![TanStack Query](https://img.shields.io/badge/TanStack_Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
 ![React Hook Form](https://img.shields.io/badge/React_Hook_Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
@@ -50,6 +66,7 @@ Aqui você encontrará meus projetos acadêmicos, estudos e desafios de lógica 
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![Neon](https://img.shields.io/badge/Neon-00E599?style=for-the-badge&logo=neon&logoColor=black)
+![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-F38020?style=for-the-badge&logo=cloudflareworkers&logoColor=white)
 ![Cloudflare Turnstile](https://img.shields.io/badge/Cloudflare_Turnstile-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
 ### Bancos de dados
@@ -68,6 +85,10 @@ Aqui você encontrará meus projetos acadêmicos, estudos e desafios de lógica 
 ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
 ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
+![Claude API](https://img.shields.io/badge/Claude_API-D97757?style=for-the-badge&logo=anthropic&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-000000?style=for-the-badge&logo=modelcontextprotocol&logoColor=white)
+![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white)
 
 ## 📊 Estatísticas do GitHub
