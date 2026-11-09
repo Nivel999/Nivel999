@@ -1,0 +1,76 @@
+@baseUrl = http://localhost:8080/api/pacientes
+
+### Criar paciente (201)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "telefone": "(11) 99999-1111",
+  "dataNascimento": "1990-05-20"
+}
+
+### Criar outro paciente (201)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nome": "João Souza",
+  "email": "joao@email.com"
+}
+
+### Criar com dados inválidos (400)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nome": "",
+  "email": "invalido"
+}
+
+### Criar com email duplicado (409)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nome": "Outra Maria",
+  "email": "maria@email.com"
+}
+
+### Listar todos (200)
+GET {{baseUrl}}
+
+### Filtrar por nome (200)
+GET {{baseUrl}}?nome=maria
+
+### Buscar por ID (200)
+GET {{baseUrl}}/1
+
+### Buscar ID inexistente (404)
+GET {{baseUrl}}/99
+
+### Atualizar completo (200)
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "nome": "Maria Silva Santos",
+  "email": "maria.santos@email.com",
+  "telefone": "(11) 98888-2222",
+  "dataNascimento": "1990-05-20"
+}
+
+### Atualizar parcial (200)
+PATCH {{baseUrl}}/2
+Content-Type: application/json
+
+{
+  "telefone": "(21) 97777-3333"
+}
+
+### Remover (204)
+DELETE {{baseUrl}}/2
+
+### Remover ID inexistente (404)
+DELETE {{baseUrl}}/2
