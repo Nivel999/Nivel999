@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultório - Pacientes e Convênios</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Consultório</h1>
+    <p>Cadastro de Pacientes e Convênios</p>
+    <span id="status-api" class="status">Verificando API...</span>
+</header>
+
+<div id="mensagem" class="mensagem oculto" role="alert"></div>
+
+<main>
+    <!-- Formulário de cadastro / edição de paciente -->
+    <section class="card">
+        <h2 id="titulo-form">Novo paciente</h2>
+        <form id="form-paciente" novalidate>
+            <input type="hidden" id="paciente-id">
+
+            <div class="campo">
+                <label for="nome">Nome *</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex.: Maria Silva">
+                <small class="erro-campo" data-campo="nome"></small>
+            </div>
+
+            <div class="campo">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" placeholder="Ex.: maria@email.com">
+                <small class="erro-campo" data-campo="email"></small>
+            </div>
+
+            <div class="linha">
+                <div class="campo">
+                    <label for="telefone">Telefone</label>
+                    <input type="text" id="telefone" name="telefone" placeholder="(61) 99999-0000">
+                    <small class="erro-campo" data-campo="telefone"></small>
+                </div>
+                <div class="campo">
+                    <label for="dataNascimento">Data de nascimento</label>
+                    <input type="date" id="dataNascimento" name="dataNascimento">
+                    <small class="erro-campo" data-campo="dataNascimento"></small>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="convenio">Convênio *</label>
+                <select id="convenio" name="convenio">
+                    <option value="">Selecione um convênio</option>
+                </select>
+                <small class="erro-campo" data-campo="convenio"></small>
+            </div>
+
+            <div class="botoes">
+                <button type="submit" id="btn-salvar" class="primario">Cadastrar</button>
+                <button type="button" id="btn-cancelar" class="secundario oculto">Cancelar edição</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Listagem de pacientes (JOIN com convênio) -->
+    <section class="card largo">
+        <div class="cabecalho-lista">
+            <h2>Pacientes</h2>
+            <input type="search" id="busca" placeholder="Buscar por nome...">
+        </div>
+        <div class="tabela-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Nascimento</th>
+                    <th>Convênio</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="tabela-pacientes"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Convênios (entidade secundária) -->
+    <section class="card">
+        <h2>Convênios</h2>
+        <form id="form-convenio" class="form-inline" novalidate>
+            <div class="campo" style="margin-bottom: 0">
+                <input type="text" id="convenio-nome" placeholder="Nome do novo convênio">
+                <small class="erro-campo" data-campo="convenio-nome"></small>
+            </div>
+            <button type="submit" class="primario">Adicionar</button>
+        </form>
+        <ul id="lista-convenios" class="lista-convenios"></ul>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

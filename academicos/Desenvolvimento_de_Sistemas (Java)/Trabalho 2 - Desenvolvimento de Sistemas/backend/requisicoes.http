@@ -1,0 +1,120 @@
+@baseUrl = http://localhost:8080/api
+
+### ===================== CONVÊNIOS =====================
+
+### Listar convênios (200)
+GET {{baseUrl}}/convenios
+
+### Buscar convênio por ID (200)
+GET {{baseUrl}}/convenios/1
+
+### Criar convênio (201)
+POST {{baseUrl}}/convenios
+Content-Type: application/json
+
+{
+  "nome": "Hapvida"
+}
+
+### Criar convênio sem nome (400)
+POST {{baseUrl}}/convenios
+Content-Type: application/json
+
+{
+  "nome": ""
+}
+
+### Criar convênio duplicado (409)
+POST {{baseUrl}}/convenios
+Content-Type: application/json
+
+{
+  "nome": "Unimed"
+}
+
+### Excluir convênio com pacientes vinculados (409)
+DELETE {{baseUrl}}/convenios/2
+
+### Excluir convênio sem pacientes (204)
+DELETE {{baseUrl}}/convenios/6
+
+### ===================== PACIENTES =====================
+
+### Listar pacientes com o convênio (200)
+GET {{baseUrl}}/pacientes
+
+### Filtrar por nome (200)
+GET {{baseUrl}}/pacientes?nome=maria
+
+### Buscar por ID (200)
+GET {{baseUrl}}/pacientes/1
+
+### Buscar ID inexistente (404)
+GET {{baseUrl}}/pacientes/99
+
+### Criar paciente (201)
+POST {{baseUrl}}/pacientes
+Content-Type: application/json
+
+{
+  "nome": "Ana Costa",
+  "email": "ana@email.com",
+  "telefone": "(61) 97777-0000",
+  "dataNascimento": "2000-01-15",
+  "convenio": { "id": 3 }
+}
+
+### Criar com dados inválidos (400)
+POST {{baseUrl}}/pacientes
+Content-Type: application/json
+
+{
+  "nome": "",
+  "email": "invalido"
+}
+
+### Criar com convênio inexistente (400)
+POST {{baseUrl}}/pacientes
+Content-Type: application/json
+
+{
+  "nome": "Teste Convênio",
+  "email": "teste@email.com",
+  "convenio": { "id": 99 }
+}
+
+### Criar com email duplicado (409)
+POST {{baseUrl}}/pacientes
+Content-Type: application/json
+
+{
+  "nome": "Outra Maria",
+  "email": "maria@email.com",
+  "convenio": { "id": 1 }
+}
+
+### Atualizar completo (200)
+PUT {{baseUrl}}/pacientes/3
+Content-Type: application/json
+
+{
+  "nome": "Ana Costa Lima",
+  "email": "ana@email.com",
+  "telefone": "(61) 97777-0000",
+  "dataNascimento": "2000-01-15",
+  "convenio": { "id": 4 }
+}
+
+### Atualizar parcial: trocar convênio (200)
+PATCH {{baseUrl}}/pacientes/3
+Content-Type: application/json
+
+{
+  "convenio": { "id": 5 }
+}
+
+### Remover paciente (204)
+DELETE {{baseUrl}}/pacientes/3
+
+### Remover ID inexistente (404)
+DELETE {{baseUrl}}/pacientes/3
